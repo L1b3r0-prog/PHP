@@ -7,7 +7,21 @@
         // function can be written as so
         // reusable blocks of code for specific task
         // function nameOfFunc(parameters) {statements;}
+        <?php
+            function averagingNumbers($a, $b, $c) {
+                $Sum = $a + $b + $c;
+                $Result = $Sum / 3;
+                return $Result
+            }
 
+            echo averagingNumbers(5, 6, 7);
+            echo averagingNumbers(5, 5, 7);
+        ?>
         
+        <?php
+            function addSome(&$text) {
+                $text = $text."problem?";
+            }
+        ?>
     </body>
 </html>
