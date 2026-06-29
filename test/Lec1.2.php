@@ -11,10 +11,10 @@
             function averagingNumbers($a, $b, $c) {
                 $Sum = $a + $b + $c;
                 $Result = $Sum / 3;
-                return $Result
+                return $Result . "<br>";
             }
 
-            echo averagingNumbers(5, 6, 7);
+            echo averagingNumbers(5, 6, 7) . "<br>";
             echo averagingNumbers(5, 5, 7);
         ?>
         
@@ -23,5 +23,7 @@
                 $text = $text."problem?";
             }
         ?>
+
+        
     </body>
 </html>

@@ -1,31 +1,33 @@
 <html>
 <head>
-    <Title> PHP Code </Title>
+    <title>PHP Code</title>
 </head>
 
 <body>
     <p>
-        echo "My first Line";
-        print "Second Line";
+        My first line written in HTML (no echo needed outside PHP tags)
     </p>
 
-    <?php
-        echo <p>"Extra Line";</p>
+    <?=
+        "= instead of php is to be written without echo";
     ?>
 
-    <?=
+    <?php
+        echo "<p>Extra Line</p>";
+    ?>
+
+    <?php
         echo "Another Line";
     ?>
 
-    $Num = 1;
     <?php
-        echo "<p>This is lesson " , $Num , ".</p>";
+        $Num = 1;
+        echo "<p>This is lesson " . $Num . ".</p>";
+
+        $var1 = "120-130 people";
+        $var2 = (int)$var1;
+        echo $var2; // prints 120
     ?>
 
-
-    $var1 = "120-130 people";
-    $var2 = (int)$var1;
-    //$var2 = (int)$var1-5;
-    // find out why this prints 120
 </body>
 </html>
