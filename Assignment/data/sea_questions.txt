@@ -1,0 +1,8 @@
+dolphin.svg|Dolphin|1
+shark.svg|Great White Shark|1
+turtle.svg|Sea Turtle|1
+octopus.svg|Jellyfish|0
+jellyfish.svg|Octopus|0
+whale.svg|Whale|1
+shark.svg|Dolphin|0
+turtle.svg|Shark|0
