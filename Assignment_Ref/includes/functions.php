@@ -54,7 +54,7 @@ function loadSeaQuestions() {
 /**
  * Randomly pick $count questions from a question bank.
  */
-function getRandomQuestions($questions, $count = 3) {
+function getRandomQuestions(array $questions, $count = 3) {
     if (count($questions) <= $count) {
         shuffle($questions);
         return $questions;
@@ -83,7 +83,7 @@ function loadLeaderboard() {
 /**
  * Overwrite the leaderboard file with the given associative array.
  */
-function saveLeaderboard($board) {
+function saveLeaderboard(array $board) {
     $lines = [];
     foreach ($board as $nickname => $points) {
         $lines[] = $nickname . '|' . $points;
@@ -95,7 +95,7 @@ function saveLeaderboard($board) {
  * Add points to a nickname's cumulative leaderboard score (or create a new entry).
  * Returns the player's new total.
  */
-function updateLeaderboard($nickname, $pointsToAdd) {
+function updateLeaderboard(string $nickname, int $pointsToAdd) {
     $board = loadLeaderboard();
     if (isset($board[$nickname])) {
         $board[$nickname] += $pointsToAdd;
@@ -110,7 +110,7 @@ function updateLeaderboard($nickname, $pointsToAdd) {
  * Sort the leaderboard either alphabetically by nickname ('name')
  * or by score descending ('score').
  */
-function sortLeaderboard($board, $by = 'name') {
+function sortLeaderboard(array $board, string $by = 'name') {
     $sorted = $board;
     if ($by === 'score') {
         arsort($sorted); // sort by value, descending, keep keys

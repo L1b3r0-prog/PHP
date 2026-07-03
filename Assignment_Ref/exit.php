@@ -7,8 +7,13 @@ if (!isset($_SESSION['nickname'])) {
     exit;
 }
 
-$nickname    = $_SESSION['nickname'];
-$totalPoints = updateLeaderboard($nickname, $_SESSION['game_points']);
+$nickname = $_SESSION['nickname'];
+
+// Points are now saved to the leaderboard immediately after every quiz
+// (see quiz.php), so Exit just needs to look up the player's current
+// all-time total rather than adding anything itself.
+$board       = loadLeaderboard();
+$totalPoints = isset($board[$nickname]) ? $board[$nickname] : 0;
 
 $pageTitle = 'Goodbye';
 include 'includes/header.php';

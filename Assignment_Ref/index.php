@@ -11,7 +11,7 @@
 
     <form action="start.php" method="post">
         <label for="nickname">What's your nickname?</label>
-        <input type="text" id="nickname" name="nickname" maxlength="20" required>
+        <input type="text" id="nickname" name="nickname" maxlength="20" pattern="[A-Za-z ]+" title="Letters only, no numbers or symbols" required>
         <button type="submit">Start Game 🚀</button>
     </form>
 </div>
