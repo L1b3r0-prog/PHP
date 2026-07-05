@@ -1,33 +1,22 @@
 <html>
-<head>
-    <title>PHP Code</title>
-</head>
+    <head>
+        <h1>Lecture 1.1</h1>
+    </head>
 
-<body>
-    <p>
-        My first line written in HTML (no echo needed outside PHP tags)
-    </p>
+    <body>
+        <?php
+            echo "First php script";
+            echo "<br>";
 
-    <?=
-        "= instead of php is to be written without echo";
-    ?>
+            print "another line";
+            echo "<br>";
 
-    <?php
-        echo "<p>Extra Line</p>";
-    ?>
+            echo "Multiple lines", "can be written", "like this";
+            echo "<br>";
 
-    <?php
-        echo "Another Line";
-    ?>
-
-    <?php
-        $Num = 1;
-        echo "<p>This is lesson " . $Num . ".</p>";
-
-        $var1 = "120-130 people";
-        $var2 = (int)$var1;
-        echo $var2; // prints 120
-    ?>
-
-</body>
+            $variable = 18;
+            echo $variable . "<br>";
+            echo "<p>My number is </p>". $variable;
+        ?>
+    </body>
 </html>
