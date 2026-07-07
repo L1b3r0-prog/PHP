@@ -16,7 +16,8 @@
 
             $variable = 18;
             echo $variable . "<br>";
-            echo "<p>My number is </p>". $variable;
+            echo "<p>My number is </p>". $variable, "<br>";
+
         ?>
     </body>
 </html>
