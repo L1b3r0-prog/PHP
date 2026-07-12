@@ -13,7 +13,7 @@ include 'includes/header.php';
 
 <div class="card">
     <h2>Quiz Result 📋</h2>
-    <p>Topic: <strong><?php echo ucfirst(htmlspecialchars($result['topic'])); ?></strong></p>
+    <p>Topic: <strong><?php echo $result['topic'] === 'math' ? 'Math' : 'Sea World'; ?></strong></p>
     <p>Correct answers: <strong><?php echo $result['correct']; ?></strong></p>
     <p>Incorrect answers: <strong><?php echo $result['incorrect']; ?></strong></p>
     <p>Points earned this quiz: <strong><?php echo $result['points']; ?></strong></p>
