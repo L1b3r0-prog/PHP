@@ -136,17 +136,22 @@ $_SESSION['current_quiz'] = $quizQuestions;
 ```php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
     $questions = $_SESSION['current_quiz'];
-    // ... validate all answered, then ...
+
     foreach ($questions as $i => $q) {
+        $userAnswer = isset($_POST['answer' . $i]) ? trim($_POST['answer' . $i]) : '';
+
+        if ($userAnswer === '') {
+            $incorrect++;
+            continue;
+        }
+
         if ($topic === 'math') {
-            $userAnswer = trim($_POST['answer' . $i]);
             if (is_numeric($userAnswer) && (int)$userAnswer === $q['answer']) {
                 $correct++;
             } else {
                 $incorrect++;
             }
         } else {
-            $userAnswer = $_POST['answer' . $i];
             $userSaysCorrect = ($userAnswer === 'correct') ? 1 : 0;
             if ($userSaysCorrect === $q['correct']) {
                 $correct++;
@@ -160,6 +165,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 - `answer0`, `answer1`, `answer2` are the form field names for the 3
   questions — the loop uses `$i` (the array index) to build the field name
   dynamically and match it back to the right question.
+- **Empty answers are treated as incorrect, not blocked.** Per the
+  assignment spec — *"if the result is incorrect, or the field is left
+  empty... that question should be counted as incorrect"* — the quiz
+  always grades on submission; nothing stops the request. The blank check
+  runs *first*, before either topic's comparison logic, and `continue`s to
+  the next question immediately.
+- That ordering matters for a subtle reason: for Sea World questions,
+  `$userSaysCorrect = ($userAnswer === 'correct') ? 1 : 0;` would turn a
+  blank string into `0` — and if the question's stored `correct` flag is
+  *also* `0` (one of the intentionally mislabeled questions), `0 === 0`
+  would be `true`, silently scoring a skipped question as correct. Checking
+  for `''` before that comparison runs avoids this edge case entirely.
 - Math: `is_numeric()` first checks the input is actually a number before
   casting it with `(int)` — this stops something like `"abc"` from silently
   becoming `0` and being wrongly compared.
@@ -169,27 +186,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 - The scoring formula `(correct * 3) - (incorrect * 2)` is taken directly
   from the assignment spec.
 
-### Validation before grading
-```php
-$allAnswered = true;
-foreach ($questions as $i => $q) {
-    $userAnswer = isset($_POST['answer' . $i]) ? trim($_POST['answer' . $i]) : '';
-    if ($userAnswer === '') {
-        $allAnswered = false;
-        break;
-    }
-}
-
-if (!$allAnswered) {
-    $error = 'Please answer all 3 questions before submitting.';
-    $quizQuestions = $questions; // re-show the SAME questions, not new random ones
-}
-```
-This runs *before* scoring. If anything's missing, it doesn't grade at all —
-it just re-displays the identical 3 questions with an error message. This
-matters because the HTML5 `required` attributes and the JavaScript check
-(further down the file) can both be bypassed, so this is the check that
-actually can't be skipped.
+Because blanks are scored rather than rejected, the `required` attributes
+and the old JS/PHP "must answer everything first" blocking checks were
+removed from `quiz.php` — the form now always submits, and grading handles
+every case (answered, wrong, or blank) in one pass.
 
 ### Saving to the leaderboard immediately
 ```php
@@ -391,7 +391,10 @@ leaderboard mid-game and see their latest score without needing to exit
 first. Originally it was only updated on Exit, but that meant the
 leaderboard could look outdated while someone was still playing.
 
-**Q: What happens to an empty math answer field?**
-A: Blocked before scoring even runs — `quiz.php`'s server-side check
-detects any missing `answer{i}` field and re-shows the same 3 questions
-with an error, rather than allowing an incomplete submission.
+**Q: What happens to an empty math answer field (or a skipped Sea World
+question)?**
+A: It's scored as incorrect immediately, per the assignment spec ("field
+left empty... counted as incorrect"). The quiz always grades on submission
+— there's no blocking check. `quiz.php` checks each answer for an empty
+string before running the topic's comparison logic, and increments
+`$incorrect` directly if it's blank.

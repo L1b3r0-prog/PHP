@@ -1,0 +1,8 @@
+dolphin.jpg|Dolphin|1
+shark.jpg|Great White Shark|1
+turtle.jpg|Sea Turtle|1
+octopus.jpg|Jellyfish|0
+jellyfish.jpg|Octopus|0
+whale.jpg|Whale|1
+shark.jpg|Dolphin|0
+turtle.jpg|Shark|0
