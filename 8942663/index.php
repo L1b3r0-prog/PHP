@@ -1,5 +1,4 @@
 <?php
-    session_start();
     $pageTitle = "Welcome";
     include 'includes/header.php';
 ?>
@@ -14,7 +13,7 @@
 
     <form action="start.php" method="post">
         <label for="nickname">What's your nickname?</label>
-        <input type="text" id="nickname" name="nickname" maxlength="20" pattern="[A-Za-z ]" title="Letter only, no number or symbols allowed" required>
+        <input type="text" id="nickname" name="nickname" maxlength="20" pattern="[A-Za-z ]+" title="Letter only, no number or symbols allowed" required>
         <button type="Submit">Start Game 🚀</button>
     </form>
 </div>
