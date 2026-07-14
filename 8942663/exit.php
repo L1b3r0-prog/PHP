@@ -22,8 +22,12 @@
     </h2>
 
     <div>
-        <a href="newgame.php" class="btn">Start New Game</a>
-        <a href="leaderboard.php" class="btn">View Leaderboard</a>
+        <a href="newgame.php" class="btn">
+            Start New Game
+        </a>
+        <a href="leaderboard.php" class="btn">
+            View Leaderboard
+        </a>
     </div>
 </div>
 

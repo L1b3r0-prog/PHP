@@ -1,13 +1,11 @@
 <?php
-// File paths (relative to this file's location, so they work no matter which page includes them)
+// File paths wihch are relative to this file's location
+// so they work no matter which page includes them
 define('MATH_FILE', __DIR__ . '/../data/math_questions.txt');
 define('SEA_FILE', __DIR__ . '/../data/sea_questions.txt');
 define('LEADERBOARD_FILE', __DIR__ . '/../data/leaderboard.txt');
 
-/**
- * Load all Math questions from the text file.
- * Each line format: operand1|operator|operand2|correctAnswer
- */
+// this loads the questions from the text file itself
 function loadMathQuestions(): array {
     $questions = [];
     if (!file_exists(MATH_FILE)) {
@@ -28,10 +26,7 @@ function loadMathQuestions(): array {
     return $questions;
 }
 
-/**
- * Load all Sea World questions from the text file.
- * Each line format: imageFile|labelShownToUser|isLabelCorrect(1 or 0)
- */
+// this loads the questions from the text file itself
 function loadSeaQuestions(): array {
     $questions = [];
     if (!file_exists(SEA_FILE)) {
@@ -51,9 +46,7 @@ function loadSeaQuestions(): array {
     return $questions;
 }
 
-/**
- * Randomly pick $count questions from a question bank.
- */
+// this randomly loads 3 questions
 function getRandomQuestions(array $questions, int $count = 3): array {
     if (count($questions) <= $count) {
         shuffle($questions);
@@ -63,9 +56,8 @@ function getRandomQuestions(array $questions, int $count = 3): array {
     return array_slice($questions, 0, $count);
 }
 
-/**
- * Load the leaderboard as an associative array: nickname => totalPoints
- */
+// this loads the leaderboard that will show the nickname
+// and the total points that they have earned/lost
 function loadLeaderboard(): array {
     $board = [];
     if (file_exists(LEADERBOARD_FILE)) {
@@ -80,9 +72,7 @@ function loadLeaderboard(): array {
     return $board;
 }
 
-/**
- * Overwrite the leaderboard file with the given associative array.
- */
+// this overwrites the leaderboard
 function saveLeaderboard(array $board): void {
     $lines = [];
     foreach ($board as $nickname => $points) {
@@ -91,10 +81,8 @@ function saveLeaderboard(array $board): void {
     file_put_contents(LEADERBOARD_FILE, implode(PHP_EOL, $lines) . PHP_EOL);
 }
 
-/**
- * Add points to a nickname's cumulative leaderboard score (or create a new entry).
- * Returns the player's new total.
- */
+// this adds the points to the nickname and if it doesn't exist it will create a new entry
+// it would then return the player's new total
 function updateLeaderboard(string $nickname, int $pointsToAdd): int {
     $board = loadLeaderboard();
     if (isset($board[$nickname])) {
@@ -106,16 +94,14 @@ function updateLeaderboard(string $nickname, int $pointsToAdd): int {
     return $board[$nickname];
 }
 
-/**
- * Sort the leaderboard either alphabetically by nickname ('name')
- * or by score descending ('score').
- */
+// this function helps to either sort by the nickname or
+// by the score in a descending manner
 function sortLeaderboard(array $board, string $by = 'name'): array {
     $sorted = $board;
     if ($by === 'score') {
-        arsort($sorted); // sort by value, descending, keep keys
+        arsort($sorted); // sort by descending value
     } else {
-        ksort($sorted, SORT_STRING | SORT_FLAG_CASE); // sort by key, alphabetical
+        ksort($sorted, SORT_STRING | SORT_FLAG_CASE); // sorts by alphabetical order
     }
     return $sorted;
 }

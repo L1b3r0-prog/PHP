@@ -16,7 +16,7 @@ if (!in_array($topic, ['math', 'sea'])) {
 
 $quizQuestions = null;
 
-// ---- Handle quiz submission ----
+// this part handles the submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 
     $questions = isset($_SESSION['current_quiz']) ? $_SESSION['current_quiz'] : [];
@@ -27,9 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
     foreach ($questions as $i => $q) {
         $userAnswer = isset($_POST['answer' . $i]) ? trim($_POST['answer' . $i]) : '';
 
-        // Blank answer = "doesn't know it" = counted as incorrect, per spec.
-        // Checked first, before any comparison, so an empty string can never
-        // accidentally match a stored answer (e.g. Sea World's correct=0).
+        // when blank answer is submitted, it will be considered as incorrect
         if ($userAnswer === '') {
             $incorrect++;
             continue;
@@ -51,18 +49,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
         }
     }
 
-    $points = ($correct * 3) - ($incorrect * 2);
+    $pointsEarned = $correct * 3;
+    $pointsLost   = $incorrect * 2;
+    $points       = $pointsEarned - $pointsLost;
     $_SESSION['game_points'] += $points;
 
-    // Save to the leaderboard file immediately, right after this quiz,
-    // instead of waiting until Exit.
+    // this will save to the leaderboard immediately
     updateLeaderboard($_SESSION['nickname'], $points);
 
     $_SESSION['last_result'] = [
-        'topic'     => $topic,
-        'correct'   => $correct,
-        'incorrect' => $incorrect,
-        'points'    => $points,
+        'topic'         => $topic,
+        'correct'       => $correct,
+        'incorrect'     => $incorrect,
+        'pointsEarned'  => $pointsEarned,
+        'pointsLost'    => $pointsLost,
+        'points'        => $points,
     ];
 
     unset($_SESSION['current_quiz']);
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
     exit;
 }
 
-// ---- Generate a fresh quiz (GET request) ----
+// this is to generate a new random set of questions
 if ($quizQuestions === null) {
     $allQuestions  = ($topic === 'math') ? loadMathQuestions() : loadSeaQuestions();
     $quizQuestions = getRandomQuestions($allQuestions, 3);
@@ -83,7 +84,9 @@ include 'includes/header.php';
 ?>
 
 <div class="card">
-    <h2><?php echo $topic === 'math' ? '➕ Math Quiz' : '🐬 Sea World Quiz'; ?></h2>
+    <h2>
+        <?php echo $topic === 'math' ? '➕ Math Quiz' : '🐬 Sea World Quiz'; ?>
+    </h2>
 
     <form action="quiz.php" method="post" id="quizForm">
         <input type="hidden" name="topic" value="<?php echo htmlspecialchars($topic); ?>">
@@ -91,19 +94,35 @@ include 'includes/header.php';
         <?php foreach ($quizQuestions as $i => $q): ?>
             <div class="question">
                 <?php if ($topic === 'math'): ?>
-                    <p>Q<?php echo $i + 1; ?>: What is <?php echo $q['op1']; ?> <?php echo htmlspecialchars($q['operator']); ?> <?php echo $q['op2']; ?>?</p>
+                    <p>
+                        Q<?php echo $i + 1; ?>: What is <?php echo $q['op1']; ?> 
+                        <?php echo htmlspecialchars($q['operator']); ?> 
+                        <?php echo $q['op2']; ?>?
+                    </p>
                     <input type="number" name="answer<?php echo $i; ?>" placeholder="Type your answer">
                 <?php else: ?>
-                    <p>Q<?php echo $i + 1; ?>: Is this animal's name correct?</p>
+                    <p>
+                        Q<?php echo $i + 1; ?>: Is this animal's name correct?
+                    </p>
                     <img src="images/<?php echo htmlspecialchars($q['image']); ?>" alt="Sea animal" class="sea-img">
-                    <p class="animal-label"><?php echo htmlspecialchars($q['label']); ?></p>
-                    <label><input type="radio" name="answer<?php echo $i; ?>" value="correct"> Correct</label>
-                    <label><input type="radio" name="answer<?php echo $i; ?>" value="incorrect"> Incorrect</label>
+                    <p class="animal-label">
+                        <?php echo htmlspecialchars($q['label']); ?>
+                    </p>
+                    <label>
+                        <input type="radio" name="answer<?php echo $i; ?>" value="correct">
+                            Correct
+                        </label>
+                    <label>
+                        <input type="radio" name="answer<?php echo $i; ?>" value="incorrect">
+                            Incorrect
+                        </label>
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
 
-        <button type="submit" name="submit_quiz" value="1">Submit Quiz ✅</button>
+        <button type="submit" name="submit_quiz" value="1">
+            Submit Quiz ✅
+        </button>
     </form>
 </div>
 

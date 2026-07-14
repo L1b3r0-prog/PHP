@@ -3,7 +3,7 @@
 
     $nickname = isset($_POST["nickname"]) ? trim($_POST["nickname"]) : "";
 
-    if ($nickname === "" || !preg_match('/^[A-Za-z ]+$/', $nickname)) {
+    if ($nickname === "" || !preg_match('/^[A-Za-z0-9 ]+$/', $nickname)) {
         header("Location: index.php?error=1");
         exit;
     }

@@ -1,8 +1,6 @@
 <footer>
-    &copy;
-    <?php echo date('Y'); ?>
-    Brain Teaser &mdash;
-    ISIT307 Assignment 1
+    Benjamin Lee &mdash;
+    UOW ID 8942663
 </footer>
 </div>
 </body>
