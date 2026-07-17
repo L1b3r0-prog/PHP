@@ -16,21 +16,14 @@
     include "includes/header.php";
 ?>
 
-<div class="card">
-    <h2>
-        Thanks for playing, <?php echo $nickname; ?>!
-    </h2>
+<main class="card">
+    <h2>Thanks for playing, <?php echo $nickname; ?>!</h2>
 
-    <div>
-        <a href="newgame.php" class="btn">
-            Start New Game
-        </a>
-        <a href="leaderboard.php" class="btn">
-            View Leaderboard
-        </a>
-    </div>
-</div>
+    <p>Your overall points (all games): <strong><?php echo $totalPoints; ?></strong></p>
 
-<?php
-    include "includes/footer.php";
-?>
+    <nav class="menu-options">
+        <a href="newgame.php" class="btn">Start New Game</a>
+    </nav>
+</main>
+
+<?php include "includes/footer.php"; ?>

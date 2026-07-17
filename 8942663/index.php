@@ -5,7 +5,7 @@
 
 <div class="card">
     <h2>
-        Welcome to Brain Teaser!
+        Welcome to Learning Hub!
     </h2>
     <p>
         Answer the questions and climb the leaderboard!

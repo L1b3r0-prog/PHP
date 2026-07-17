@@ -48,3 +48,5 @@
         <a href="exit.php" class="btn btn-exit">🚪 Exit</a>
     </div>
 </div>
+
+<?php include "includes/footer.php"; ?>

@@ -3,3 +3,4 @@ d|-6
 testing|-3
 new test|0
 asd123|-6
+testing testing|-3
