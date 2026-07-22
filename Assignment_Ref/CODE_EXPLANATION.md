@@ -4,6 +4,12 @@ This document walks through every file: what it does, the key logic inside it,
 and the reasoning behind design decisions — so you can explain any part of it
 confidently if your tutor asks.
 
+**Note on using this file:** the goal is to understand *why* each decision
+was made, not to recite this document's wording. Read a section, close it,
+and try explaining that part out loud in your own words. If you can only
+repeat it verbatim, that's a sign to go back and actually work through the
+logic again rather than move on.
+
 ---
 
 ## 1. `index.php` — Nickname Entry
@@ -12,11 +18,12 @@ confidently if your tutor asks.
 
 **Key code:**
 ```php
-<?php session_start(); ?>
+<?php $pageTitle = 'Welcome'; include 'includes/header.php'; ?>
 ```
-`session_start()` must run before *any* HTML output on every page that uses
-`$_SESSION`. It either creates a new session (first visit) or resumes an
-existing one, based on a session ID cookie PHP sets in the browser.
+Note this page does **not** call `session_start()`. That's deliberate — it
+never reads or writes `$_SESSION` anywhere on this page (it's just a static
+form), so starting a session here would do nothing. `session_start()` is
+only needed on pages that actually touch `$_SESSION`, which this one doesn't.
 
 ```html
 <input type="text" id="nickname" name="nickname" maxlength="20"
@@ -25,6 +32,9 @@ existing one, based on a session ID cookie PHP sets in the browser.
 - `pattern="[A-Za-z ]+"` is a regex the *browser* checks before allowing
   submission — letters and spaces only. This is a **usability** feature, not
   a security one: it gives instant feedback without a server round-trip.
+  Note the `+` at the end — without it, the pattern only matches a
+  single-character string (the browser wraps `pattern` in `^(?:...)$`
+  automatically), which would reject every normal nickname.
 - `required` stops empty submissions client-side.
 
 **Why this isn't "real" validation on its own:** anyone can disable
@@ -43,6 +53,8 @@ That's why the actual enforcement lives in `start.php` (below).
 up the session that represents "this player is now in a game."
 
 ```php
+session_start();
+
 $nickname = isset($_POST['nickname']) ? trim($_POST['nickname']) : '';
 
 if ($nickname === '' || !preg_match('/^[A-Za-z ]+$/', $nickname)) {
@@ -50,6 +62,9 @@ if ($nickname === '' || !preg_match('/^[A-Za-z ]+$/', $nickname)) {
     exit;
 }
 ```
+- `session_start()` is needed here because this file both reads (nothing yet)
+  and writes `$_SESSION` further down — every page that touches `$_SESSION`
+  needs this call before any output.
 - `trim()` removes leading/trailing whitespace (so `"  Alex  "` becomes `"Alex"`).
 - `preg_match('/^[A-Za-z ]+$/', $nickname)` — this is the **real** check.
   - `^` and `$` anchor the pattern to the *whole* string (not just part of it).
@@ -64,6 +79,14 @@ if ($nickname === '' || !preg_match('/^[A-Za-z ]+$/', $nickname)) {
   told the browser to redirect, potentially running code (like setting
   session variables) that shouldn't happen for an invalid nickname.
 
+**Why restrict to letters/spaces only, not numbers or symbols?** The
+leaderboard file (`data/leaderboard.txt`) stores entries as
+`nickname|points`, one per line. Allowing the pipe character `|` (or a
+newline) into a nickname would corrupt that file's parsing — a name like
+`Sam|999` would be split into extra fields by `explode('|', $line)`. Keeping
+the allowed character set narrow avoids ever needing a special case to
+exclude just the delimiter character.
+
 ```php
 $_SESSION['nickname']    = htmlspecialchars($nickname);
 $_SESSION['game_points'] = 0;
@@ -73,7 +96,9 @@ updateLeaderboard($_SESSION['nickname'], 0);
   entities before storing. Even though the regex above already blocks
   symbols, this is a second layer of protection in case the validation
   logic ever changes — good practice for anything that gets echoed into
-  HTML later (defends against XSS/script injection).
+  HTML later (defends against XSS/script injection). Because it's applied
+  once here at storage time, later files (like `exit.php`) can echo
+  `$_SESSION['nickname']` directly without re-escaping it.
 - `game_points` starts at 0 — this is the running total *for this game
   session only*, separate from the player's all-time leaderboard total.
 - `updateLeaderboard($nickname, 0)` registers the player on the leaderboard
@@ -94,20 +119,30 @@ bypassed — it's the only check that's actually trustworthy.
 the two quiz topics, leaderboard, and exit.
 
 ```php
+session_start();
+
 if (!isset($_SESSION['nickname'])) {
     header('Location: index.php');
     exit;
 }
 ```
-This "guard clause" appears at the top of almost every page. It checks
-whether a valid session exists; if someone tries to jump straight to
-`menu.php` (or any other page) without going through `start.php` first —
-e.g. by typing the URL directly — they get sent back to the nickname
-screen instead of seeing a broken page.
+This "guard clause" appears at the top of almost every page that requires an
+active session. It checks whether a valid session exists; if someone tries
+to jump straight to `menu.php` (or any other page) without going through
+`start.php` first — e.g. by typing the URL directly — they get sent back to
+the nickname screen instead of seeing a broken page.
 
 The links to quizzes are plain `<a href="quiz.php?topic=math">` — this
 sends a **GET** request with `topic` as a URL query parameter, which
-`quiz.php` reads via `$_GET['topic']`.
+`quiz.php` reads via `$_GET['topic']`. The Leaderboard link is
+`leaderboard.php?from=menu` (see section 6 for why).
+
+The navigation options are wrapped in `<nav class="menu-options">` rather
+than a plain `<div>` — semantically, this is a set of navigation links, so
+`<nav>` is the tag that actually describes it. The primary page content is
+wrapped in `<main class="card">` for the same reason: it's the one main
+content region of the page. Neither change affects styling — the CSS still
+targets `.card`/`.menu-options` by class name, not by tag.
 
 ---
 
@@ -123,7 +158,7 @@ $allQuestions  = ($topic === 'math') ? loadMathQuestions() : loadSeaQuestions();
 $quizQuestions = getRandomQuestions($allQuestions, 3);
 $_SESSION['current_quiz'] = $quizQuestions;
 ```
-- Loads the *entire* question bank for the chosen topic (6–8 questions).
+- Loads the *entire* question bank for the chosen topic (8 questions each).
 - `getRandomQuestions()` shuffles that list and takes the first 3
   (`array_slice($questions, 0, 3)`).
 - **Crucially**, those 3 chosen questions are saved into
@@ -131,6 +166,9 @@ $_SESSION['current_quiz'] = $quizQuestions;
   questions were shown, so that when the form is submitted, it can check
   the answers against the *same* questions — not regenerate new random ones
   (which would make grading meaningless).
+
+Neither the math input nor the Sea World radio buttons have a `required`
+attribute — this is intentional (see Job B below).
 
 ### Job B — Grading a submission (POST)
 ```php
@@ -160,7 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
             }
         }
     }
-    $points = ($correct * 3) - ($incorrect * 2);
+
+    $pointsEarned = $correct * 3;
+    $pointsLost   = $incorrect * 2;
+    $points       = $pointsEarned - $pointsLost;
 ```
 - `answer0`, `answer1`, `answer2` are the form field names for the 3
   questions — the loop uses `$i` (the array index) to build the field name
@@ -170,7 +211,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
   empty... that question should be counted as incorrect"* — the quiz
   always grades on submission; nothing stops the request. The blank check
   runs *first*, before either topic's comparison logic, and `continue`s to
-  the next question immediately.
+  the next question immediately. This is exactly why `required` was removed
+  from the form fields in Job A — the browser must let the form submit with
+  blanks so this code path can be reached at all, for both math's text
+  input and Sea World's radio pair.
 - That ordering matters for a subtle reason: for Sea World questions,
   `$userSaysCorrect = ($userAnswer === 'correct') ? 1 : 0;` would turn a
   blank string into `0` — and if the question's stored `correct` flag is
@@ -183,17 +227,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_quiz'])) {
 - Sea World: the radio button's `value="correct"` or `value="incorrect"`
   gets converted to `1`/`0` and compared against the question's stored
   `correct` flag (also `1`/`0`).
-- The scoring formula `(correct * 3) - (incorrect * 2)` is taken directly
-  from the assignment spec.
-
-Because blanks are scored rather than rejected, the `required` attributes
-and the old JS/PHP "must answer everything first" blocking checks were
-removed from `quiz.php` — the form now always submits, and grading handles
-every case (answered, wrong, or blank) in one pass.
+- **Points are split into two named parts** rather than one combined line:
+  `$pointsEarned` (`correct * 3`) and `$pointsLost` (`incorrect * 2`), with
+  `$points` as their difference. This is mathematically identical to the
+  spec's formula `(correct * 3) - (incorrect * 2)` — it's split apart purely
+  so `result.php` can show the earned/lost breakdown separately, not just
+  the net figure.
 
 ### Saving to the leaderboard immediately
 ```php
-$points = ($correct * 3) - ($incorrect * 2);
 $_SESSION['game_points'] += $points;
 updateLeaderboard($_SESSION['nickname'], $points);
 ```
@@ -212,10 +254,12 @@ pattern: one script handling both GET (show form) and POST (process form).
 ## 5. `result.php` — Show Quiz Outcome
 
 **Purpose:** Reads `$_SESSION['last_result']` (set at the end of the POST
-branch in `quiz.php`) and displays correct/incorrect counts, points earned,
-and the running game total.
+branch in `quiz.php`) and displays correct/incorrect counts, the
+earned/lost points breakdown, and the running game total.
 
 ```php
+session_start();
+
 if (!isset($_SESSION['nickname']) || !isset($_SESSION['last_result'])) {
     header('Location: menu.php');
     exit;
@@ -233,6 +277,17 @@ of whatever string it's given rather than expanding it. This was a small
 bug fixed during development — a good example if your tutor asks about
 debugging/testing.
 
+```php
+<p>Points earned (correct answers): <strong>+<?php echo $result['pointsEarned']; ?></strong></p>
+<p>Points lost (incorrect answers): <strong>-<?php echo $result['pointsLost']; ?></strong></p>
+<p>Points from this quiz: <strong><?php echo $result['points']; ?></strong></p>
+```
+These three lines display the breakdown computed in `quiz.php` — showing
+the scoring rule transparently rather than only the net result. The spec
+requires the net points-from-this-quiz figure and the overall game total to
+be shown; it doesn't forbid showing the breakdown as well, so this is
+additive rather than a deviation from the spec.
+
 ---
 
 ## 6. `leaderboard.php` — Sortable Leaderboard
@@ -240,11 +295,34 @@ debugging/testing.
 ```php
 $sortBy = (isset($_GET['sort']) && $_GET['sort'] === 'score') ? 'score' : 'name';
 $board  = sortLeaderboard(loadLeaderboard(), $sortBy);
+
+$validOrigins = ['menu', 'exit', 'result'];
+$from = (isset($_GET['from']) && in_array($_GET['from'], $validOrigins)) ? $_GET['from'] : 'menu';
+
+$backTarget = $from . '.php';
+if (!isset($_SESSION['nickname'])) {
+    $backTarget = 'index.php';
+}
 ```
 - Reads the `?sort=` URL parameter to decide sort order, defaulting to name
   if it's missing or invalid.
 - `loadLeaderboard()` reads the whole file fresh every time this page
   loads — no caching, so it's always current.
+- **The "Back" button needs to know which page linked here.** Every page
+  that links to the leaderboard (`menu.php`, `result.php`, `exit.php`) adds
+  `?from=menu`, `?from=result`, or `?from=exit` to that link, so this page
+  can send the user back to wherever they actually came from, instead of
+  always defaulting to `menu.php`.
+- `$from` is checked against a **whitelist** (`$validOrigins`) rather than
+  used directly. This matters because trusting a raw `$_GET` value as a
+  redirect destination without validating it first is a real risk — someone
+  could otherwise craft a URL like `leaderboard.php?from=http://evil.com`
+  and the app would happily send users there. The whitelist means only
+  those three exact strings are ever accepted; anything else (missing,
+  mistyped, or tampered) safely falls back to `menu.php`.
+- The sort links also carry `&from=...` forward, so sorting the table while
+  viewing from a non-menu page (e.g. Exit) doesn't reset the Back button to
+  point at `menu.php`.
 
 In `functions.php`:
 ```php
@@ -274,7 +352,16 @@ algorithm when PHP provides the right tool for each case.
 ## 7. `exit.php` — Final Score & Reset Option
 
 ```php
-$board       = loadLeaderboard();
+session_start();
+require 'includes/functions.php';
+
+if (!isset($_SESSION['nickname'])) {
+    header('Location: index.php');
+    exit;
+}
+
+$nickname = $_SESSION['nickname'];
+$board = loadLeaderboard();
 $totalPoints = isset($board[$nickname]) ? $board[$nickname] : 0;
 ```
 Notice this **reads** the leaderboard rather than adding to it — because by
@@ -283,6 +370,17 @@ points to the file (in `quiz.php`, step 4 above). If this file *also* added
 `$_SESSION['game_points']` on top, the player's total would be counted
 twice. This was a bug in an earlier version, fixed once leaderboard saving
 was moved to be per-quiz instead of per-game.
+
+```php
+<p>Your overall points (all games): <strong><?php echo $totalPoints; ?></strong></p>
+```
+This line is required by the spec ("nickname and overall points... should
+be displayed") — `$totalPoints` is calculated above but must actually be
+echoed here, not just computed and left unused.
+
+`$nickname` is echoed directly without calling `htmlspecialchars()` again
+here — that's safe because it was already escaped once, at the point it was
+first stored in `start.php` (`$_SESSION['nickname'] = htmlspecialchars($nickname);`).
 
 ---
 
@@ -295,6 +393,10 @@ session_destroy();
 header('Location: index.php');
 exit;
 ```
+- `session_start()` is required here even though this page seems to only be
+  *tearing down* the session — `session_unset()`/`session_destroy()` both
+  need an active session to operate on; without starting one first, PHP
+  raises a warning and does nothing.
 - `session_unset()` clears all `$_SESSION` variables.
 - `session_destroy()` destroys the session data on the server side entirely.
 - Together, this fully resets the player's state, so the next person (or
@@ -305,6 +407,17 @@ exit;
 ---
 
 ## 9. `includes/functions.php` — Shared Helper Functions
+
+**Why a separate file at all, instead of writing this logic inside each
+page?** Several functions here are reused across multiple pages —
+`loadLeaderboard()` alone is called from both `leaderboard.php` and
+`exit.php`. Keeping the file-parsing logic (the exact pipe-delimited format,
+which field is which) in one place means every page just calls a function
+and gets back a plain PHP array, without needing to know or duplicate how
+the underlying `.txt` file is structured. This is only `require`'d in the
+files that actually call one of its functions (`start.php`, `quiz.php`,
+`leaderboard.php`, `exit.php`) — `index.php`, `menu.php`, `result.php`, and
+`newgame.php` correctly omit it since they never call anything from it.
 
 | Function | What it does |
 |---|---|
@@ -333,6 +446,18 @@ unlikely to appear naturally in a nickname, question, or filename (unlike
 commas, which might appear in text). `explode()` is PHP's basic
 "split a string into an array" function — simplest tool that fits the job.
 
+**Why `__DIR__` for the file paths?**
+```php
+define('MATH_FILE', __DIR__ . '/../data/math_questions.txt');
+```
+`__DIR__` is a PHP magic constant that always resolves to the absolute
+filesystem path of the folder containing `functions.php` itself — regardless
+of which page included it, what folder the PHP server was started from, or
+what machine/OS the project is unzipped onto. This guarantees the data file
+paths resolve correctly no matter where the whole `learning-hub/` folder
+ends up, as long as its internal folder structure (`includes/` and `data/`
+as siblings) stays intact.
+
 **Type hints** (e.g. `function loadMathQuestions(): array`) declare what
 type of value a function expects/returns. PHP will throw a `TypeError` if
 the wrong type is ever passed in or returned, catching mistakes early
@@ -342,14 +467,25 @@ rather than causing confusing behaviour somewhere else in the code later.
 
 ## 10. `includes/header.php` / `footer.php`
 
-Just the shared HTML skeleton (opening `<html>`/`<head>` and closing
-`</body>/</html>`) so every page doesn't repeat the same boilerplate. Every
-page does:
+The shared HTML skeleton — `header.php` opens `<!DOCTYPE html>`, `<head>`,
+and `<body>`; `footer.php` closes them. Every page does:
 ```php
 $pageTitle = 'Some Title';
 include 'includes/header.php';
 ```
-before its own content, then `include 'includes/footer.php';` at the end.
+before its own content (which contains no `<html>`/`<body>` tags of its
+own — those would duplicate what `header.php`/`footer.php` already output),
+then `include 'includes/footer.php';` at the end.
+
+**Why split into separate files instead of writing full HTML in every
+page?** `include` splices the target file's content directly into the
+calling script at that exact line, before execution continues — so
+`header.php`, the page-specific content, and `footer.php` all run as one
+continuous script and produce a single valid HTML document, even though
+they're three separate files on disk. This avoids repeating the same
+`<!DOCTYPE>`, stylesheet link, and footer markup across all eight page
+files — a change to the shared layout (e.g. the copyright line) only needs
+to happen in one place.
 
 ---
 
@@ -398,3 +534,17 @@ left empty... counted as incorrect"). The quiz always grades on submission
 — there's no blocking check. `quiz.php` checks each answer for an empty
 string before running the topic's comparison logic, and increments
 `$incorrect` directly if it's blank.
+
+**Q: Why does `session_start()` appear in some files but not others?**
+A: It's only needed on pages that actually read or write `$_SESSION`.
+`index.php` is the one page that does neither (it's just a static form), so
+it doesn't call it. Every other page touches session data in some way —
+checking the nickname exists, storing quiz state, tracking points, or
+tearing the session down — so they all need it before any output.
+
+**Q: Why `<main>`/`<nav>` instead of plain `<div>`s in some places?**
+A: Where a semantic HTML5 tag genuinely matches what the element represents
+— the primary content region of a page, or a set of navigation links —
+using that tag instead of a generic `div` makes the document structure
+explicit. It's a drop-in swap with no effect on styling, since the CSS
+still targets the same class names.
