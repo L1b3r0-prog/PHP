@@ -1,0 +1,23 @@
+Requires Database
+Requires clients to register and both C and A to login/logout
+
+Partial search ex. BE instead of BEDOK
+Combined search ex. name, location and pricing (best to do combined search for full marks)
+
+For each location, limited amount of studios (own assumptions and up to me)
+
+No overlapping booking for timeslots that are already booked
+
+Clients should be able to view all locations and bookings that are/aren't available
+Also able to view curr and future bookings
+
+Admin able to create more locations and create/edit/cancel bookings
+
+For login, only ID? and no password check
+
+
+
+
+------------------------------
+Check if there are extra requirements or logic checks required before submitting
+------------------------------
