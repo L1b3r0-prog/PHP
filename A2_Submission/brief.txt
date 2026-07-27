@@ -25,4 +25,4 @@ No warning labels if wrong
 Email not verifying properly (must be @gmail/hotmail etc)
 Admin shouldn't be able to register an acc
 
-Location selection not on preferred search by bitch
+Location selection not on preferred search by bitch (needs to be able to search by name)

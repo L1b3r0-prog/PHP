@@ -9,7 +9,7 @@
         Welcome to MyRecordingStudio
     </h1>
     <p>
-        Book a recording studio across multiple locations that are equipped with the latest tech!
+        Sign up to book a recording studio across multiple locations that are equipped with the latest tech!
     </p>
 
     <?php if (!is_logged_in()): ?>
