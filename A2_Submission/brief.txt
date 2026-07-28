@@ -21,8 +21,34 @@ For login, only ID? and no password check
 ------------------------------
 Check if there are extra requirements or logic checks required before submitting
 ------------------------------
-No warning labels if wrong
+No warning labels if wrong (wrong username/password)
 Email not verifying properly (must be @gmail/hotmail etc)
-Admin shouldn't be able to register an acc
+Admin shouldn't be able to register an acc (only admin can create another admin account)
 
-Location selection not on preferred search by bitch (needs to be able to search by name)
+Location selection not on preferred search by bitch (needs to be able to search by name or location or type)
+
+
+
+
+How it all works
+----------------------------
+index.php -> landing page
+login.php -> checks against user table
+register.php -> creates a new user
+logout.php -> exists session
+booking.php -> all related booking stuff
+location.php -> all related location stuff
+admin.php -> all related admin stuff
+
+UNDER CLASSES FOLDER
+---------------------------
+administrator.php ->
+booking.php ->
+client.php ->
+location.php ->
+studio.php ->
+user.php ->
+
+flow
+------------------------------
+index -> login/register -> booking/location -> logout
