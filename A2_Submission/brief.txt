@@ -52,3 +52,8 @@ user.php ->
 flow
 ------------------------------
 index -> login/register -> booking/location -> logout
+
+
+check
+-------------------------------
+is it one admin account or admin can create another admin account
