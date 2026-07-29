@@ -29,13 +29,42 @@ abstract class User {
     public function getType(): string { return $this->type; }
 
     /**
-     * Validates registration input. Returns array of error strings (empty = valid).
+     * Common consumer webmail domains accepted for CLIENT registration.
+     * Admin accounts use a separate, stricter domain check (see validate()).
      */
-    public static function validate(string $name, string $phone, string $email, string $password): array {
+    private const CLIENT_EMAIL_DOMAINS = [
+        'gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com',
+        'live.com', 'icloud.com', 'protonmail.com',
+    ];
+
+    /** Domain required for staff/administrator accounts. Adjust to your organisation's real domain. */
+    private const ADMIN_EMAIL_DOMAIN = 'myrecordingstudio.com';
+
+    /**
+     * Validates registration input. Returns array of error strings (empty = valid).
+     * $type controls which email domain rule applies: 'client' -> common webmail
+     * providers only, 'admin' -> the organisation's own domain only.
+     */
+    public static function validate(string $name, string $phone, string $email, string $password, string $type = 'client'): array {
         $errors = [];
         if (trim($name) === '') $errors[] = 'Name is required.';
         if (!preg_match('/^[0-9+\-\s]{6,20}$/', $phone)) $errors[] = 'Phone number is invalid.';
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email address is invalid.';
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email address is invalid.';
+        } else {
+            $domain = strtolower(substr(strrchr($email, '@'), 1));
+            if ($type === 'admin') {
+                if ($domain !== self::ADMIN_EMAIL_DOMAIN) {
+                    $errors[] = 'Administrator accounts must use an @' . self::ADMIN_EMAIL_DOMAIN . ' email address.';
+                }
+            } else {
+                if (!in_array($domain, self::CLIENT_EMAIL_DOMAINS, true)) {
+                    $errors[] = 'Please use a personal email address (Gmail, Hotmail, Outlook, Yahoo, etc.).';
+                }
+            }
+        }
+
         if (strlen($password) < 6) $errors[] = 'Password must be at least 6 characters.';
         return $errors;
     }

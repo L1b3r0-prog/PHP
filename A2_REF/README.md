@@ -12,8 +12,20 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 
 ## Test logins (from schema.sql sample data)
 
-- Admin: `admin@studio.com` / `admin123`
-- Client: `client@studio.com` / `client123`
+- Admin: `admin@myrecordingstudio.com` / `admin123`
+- Client: `client@gmail.com` / `client123`
+
+## Account creation rules
+
+- **Public `register.php` creates client accounts only.** Client emails must be
+  from a common webmail provider (gmail.com, hotmail.com, outlook.com, yahoo.com,
+  live.com, icloud.com, protonmail.com) -- edit the list in `User::CLIENT_EMAIL_DOMAINS`
+  if you need more.
+- **Administrator accounts are never self-registered.** They're created either
+  directly in `schema.sql`, or by an existing admin via `admin_create.php`
+  (linked only in the nav once logged in as admin, not on the public site).
+  Admin emails must match `User::ADMIN_EMAIL_DOMAIN` (default `myrecordingstudio.com`) --
+  change that constant to your real organisation domain.
 
 ## File overview
 

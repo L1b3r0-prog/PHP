@@ -46,7 +46,7 @@ require __DIR__ . '/includes/header.php';
 ?>
 <div class="card" style="max-width:480px;">
     <h1>Modify Booking #<?= (int)$bookingId ?></h1>
-    <p><?= h($booking['location_description']) ?> &mdash; Studio <?= (int)$booking['studio_number'] ?>
+    <p><?= h($booking['location_description']) ?> &mdash; <?= h(Studio::displayName($booking['studio_label'], $booking['studio_number'])) ?>
        <?php if (current_user_type() === 'admin'): ?> &mdash; Client: <?= h($booking['client_name']) ?><?php endif; ?></p>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
     <form method="post">

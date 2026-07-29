@@ -1,25 +1,26 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
-$pageTitle = 'Register';
+require_role('admin');
+$pageTitle = 'Add Administrator';
 $errors = [];
 
-// Public registration is CLIENT-ONLY. Administrator accounts are provisioned
-// separately by an existing admin (see admin_create.php) and are never
-// self-registered through this public form.
+// This page is only reachable by someone already logged in as admin.
+// It is intentionally NOT linked from register.php -- admin accounts
+// are never created through public self-registration.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    $type = 'client';
+    $type = 'admin';
 
     $errors = User::validate($name, $phone, $email, $password, $type);
 
     if (empty($errors)) {
         try {
-            $userId = User::register($name, $phone, $email, $password, $type);
-            $_SESSION['flash_success'] = 'Registration successful. Please log in.';
-            header('Location: login.php');
+            User::register($name, $phone, $email, $password, $type);
+            $_SESSION['flash_success'] = 'Administrator account created for ' . $email . '.';
+            header('Location: admin_client_list.php');
             exit;
         } catch (Exception $e) {
             $errors[] = $e->getMessage();
@@ -30,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require __DIR__ . '/includes/header.php';
 ?>
 <div class="card" style="max-width:480px;margin:0 auto;">
-    <h1>Register</h1>
-    <p><small>This form creates a client account. Administrator accounts are created internally by existing staff.</small></p>
+    <h1>Add Administrator</h1>
+    <p><small>Staff accounts only. Must use the organisation email domain.</small></p>
     <?php foreach ($errors as $error): ?>
         <div class="alert alert-error"><?= h($error) ?></div>
     <?php endforeach; ?>
@@ -42,14 +43,13 @@ require __DIR__ . '/includes/header.php';
         <label>Phone</label>
         <input type="text" name="phone" value="<?= h($_POST['phone'] ?? '') ?>" required>
 
-        <label>Email (Gmail, Hotmail, Outlook, Yahoo, etc.)</label>
+        <label>Email (@myrecordingstudio.com)</label>
         <input type="email" name="email" value="<?= h($_POST['email'] ?? '') ?>" required>
 
-        <label>Password</label>
+        <label>Temporary Password</label>
         <input type="password" name="password" required>
 
-        <button class="btn" type="submit">Register</button>
+        <button class="btn" type="submit">Create Administrator</button>
     </form>
-    <p style="margin-top:16px;">Already have an account? <a href="login.php">Login here</a></p>
 </div>
 <?php require __DIR__ . '/includes/footer.php'; ?>

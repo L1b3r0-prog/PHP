@@ -15,6 +15,7 @@
                 <a href="location_create.php">Add Location</a>
                 <a href="admin_booking_manage.php">Manage Bookings</a>
                 <a href="admin_client_list.php">Clients</a>
+                <a href="admin_create.php">Add Admin</a>
             <?php else: ?>
                 <a href="location_list.php">Locations</a>
                 <a href="booking_create.php">Book a Studio</a>

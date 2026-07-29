@@ -196,7 +196,7 @@ class Booking {
     }
 
     private static function detailSelect(): string {
-        return "SELECT b.*, s.studio_number, l.description AS location_description,
+        return "SELECT b.*, s.studio_number, s.label AS studio_label, l.description AS location_description,
                         l.location_id, l.cost_per_hour, u.name AS client_name, u.email AS client_email
                  FROM bookings b
                  JOIN studios s ON s.studio_id = b.studio_id

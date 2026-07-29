@@ -6,10 +6,12 @@
             parent::__construct($id, $name, $phone, $email, "client");
         }
         
+        # This shows the client's completed session
         public function completedSessions(): array {
             return Booking::completedForClient($this->id);
         }
 
+        # This shows the client's current and future sessions
         public function upcomingSessions(): array {
             return Booking::upcomingForClient($this->id);
         }

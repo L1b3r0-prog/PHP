@@ -5,7 +5,6 @@ $pageTitle = 'Manage Bookings';
 $errors = [];
 $confirmation = null;
 
-$locations = Location::all();
 $clients = User::allClients();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,7 +36,7 @@ require __DIR__ . '/includes/header.php';
     <?php if ($confirmation): ?>
         <div class="alert alert-success">
             Booking #<?= (int)$confirmation['booking_id'] ?> created for <?= h($confirmation['client_name']) ?>
-            at <?= h($confirmation['location_description']) ?> (Studio <?= (int)$confirmation['studio_number'] ?>),
+            at <?= h($confirmation['location_description']) ?> (<?= h(Studio::displayName($confirmation['studio_label'], $confirmation['studio_number'])) ?>),
             <?= h($confirmation['booking_date']) ?> <?= h(substr($confirmation['start_time'],0,5)) ?>-<?= h(substr($confirmation['end_time'],0,5)) ?>.
             Total: $<?= h(number_format((float)$confirmation['total_cost'],2)) ?>
         </div>
@@ -53,12 +52,11 @@ require __DIR__ . '/includes/header.php';
         </select>
 
         <label>Location</label>
-        <select name="location_id" required>
-            <option value="">-- Select location --</option>
-            <?php foreach ($locations as $loc): ?>
-                <option value="<?= (int)$loc['location_id'] ?>"><?= h($loc['description']) ?> ($<?= h(number_format((float)$loc['cost_per_hour'],2)) ?>/hr)</option>
-            <?php endforeach; ?>
-        </select>
+        <div class="autocomplete" data-role="location-search">
+            <input type="text" class="location-search-input" placeholder="Type a location name..." autocomplete="off" required>
+            <input type="hidden" name="location_id" class="location-hidden-id">
+            <div class="suggestions"></div>
+        </div>
 
         <label>Booking Date</label>
         <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" required>
@@ -82,7 +80,7 @@ require __DIR__ . '/includes/header.php';
             <td><?= (int)$b['booking_id'] ?></td>
             <td><?= h($b['client_name']) ?></td>
             <td><?= h($b['location_description']) ?></td>
-            <td><?= (int)$b['studio_number'] ?></td>
+            <td><?= h(Studio::displayName($b['studio_label'], $b['studio_number'])) ?></td>
             <td><?= h($b['booking_date']) ?></td>
             <td><?= h(substr($b['start_time'],0,5)) ?>-<?= h(substr($b['end_time'],0,5)) ?></td>
             <td><span class="badge badge-<?= $b['status'] === 'active' ? 'active' : 'cancelled' ?>"><?= h($b['status']) ?></span></td>
@@ -98,4 +96,5 @@ require __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
     </table>
 </div>
+<script src="assets/location-autocomplete.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

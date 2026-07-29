@@ -115,4 +115,26 @@ class Location {
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Type-ahead search used by ajax_location_search.php: matches a location's
+     * own description OR the custom label of any studio inside it (e.g. typing
+     * "vocal" finds the location that has a studio named "Vocal Booth").
+     * Returns each location plus which studio label matched, if any.
+     */
+    public static function searchWithStudios(string $term): array {
+        $db = Database::getConnection();
+        $sql = "SELECT l.*, 
+                       (SELECT s.label FROM studios s
+                        WHERE s.location_id = l.location_id AND s.label LIKE ?
+                        LIMIT 1) AS matched_studio_label
+                FROM locations l
+                WHERE l.description LIKE ?
+                   OR EXISTS (SELECT 1 FROM studios s WHERE s.location_id = l.location_id AND s.label LIKE ?)
+                ORDER BY l.description";
+        $like = '%' . $term . '%';
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$like, $like, $like]);
+        return $stmt->fetchAll();
+    }
 }

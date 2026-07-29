@@ -127,6 +127,34 @@ table th { background: #eef1f8; }
 .badge-active { background: #e6f6f4; color: var(--success); }
 .badge-cancelled { background: #fdecea; color: var(--error); }
 
+.autocomplete { position: relative; }
+.suggestions {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 20;
+}
+.suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: #eef1f8; }
+.suggestion-item strong { font-size: 0.95em; }
+.suggestion-item span { font-size: 0.8em; color: var(--muted); }
+
 .site-footer {
     text-align: center;
     padding: 20px;

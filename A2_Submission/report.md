@@ -1,0 +1,1 @@
+For the sql database, import the sql schema from the folder labeled database.

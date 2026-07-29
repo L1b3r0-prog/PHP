@@ -25,6 +25,20 @@ class Studio {
         return $stmt->fetchAll();
     }
 
+    /** "Vocal Booth" if a custom label is set, otherwise "Studio 3" */
+    public static function displayName(?string $label, int $studioNumber): string {
+        $label = trim((string)$label);
+        return $label !== '' ? $label : ('Studio ' . $studioNumber);
+    }
+
+    /** Sets or clears a studio's custom label */
+    public static function rename(int $studioId, string $label): void {
+        $label = trim($label);
+        $db = Database::getConnection();
+        $stmt = $db->prepare('UPDATE studios SET label = ? WHERE studio_id = ?');
+        $stmt->execute([$label === '' ? null : $label, $studioId]);
+    }
+
     /**
      * Finds the first studio at a location that is free for the requested
      * date/time range. Returns studio_id, or null if none available.

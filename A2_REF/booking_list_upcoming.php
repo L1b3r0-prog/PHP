@@ -19,7 +19,7 @@ require __DIR__ . '/includes/header.php';
         <tr>
             <td><?= (int)$b['booking_id'] ?></td>
             <td><?= h($b['location_description']) ?></td>
-            <td><?= (int)$b['studio_number'] ?></td>
+            <td><?= h(Studio::displayName($b['studio_label'], $b['studio_number'])) ?></td>
             <td><?= h($b['booking_date']) ?></td>
             <td><?= h(substr($b['start_time'],0,5)) ?> - <?= h(substr($b['end_time'],0,5)) ?></td>
             <td>$<?= h(number_format((float)$b['total_cost'],2)) ?></td>

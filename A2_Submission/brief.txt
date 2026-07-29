@@ -27,8 +27,9 @@ Admin shouldn't be able to register an acc (only admin can create another admin 
 
 Location selection not on preferred search by bitch (needs to be able to search by name or location or type)
 
+Phone number regex (must be 8 digits, no more, no less)
 
-
+booking timing cannot be in the past, and cannot be too far in the future (no more than 6 months)
 
 How it all works
 ----------------------------
