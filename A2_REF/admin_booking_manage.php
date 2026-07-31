@@ -31,7 +31,7 @@ $allBookings = Booking::allBookings();
 
 require __DIR__ . '/includes/header.php';
 ?>
-<div class="card" style="max-width:560px;">
+<div class="card" style="max-width:560px;margin:0 auto;">
     <h1>Create Booking on Behalf of a Client</h1>
     <?php if ($confirmation): ?>
         <div class="alert alert-success">
@@ -53,16 +53,21 @@ require __DIR__ . '/includes/header.php';
 
         <label>Location</label>
         <div class="autocomplete" data-role="location-search">
-            <input type="text" class="location-search-input" placeholder="Type a location name..." autocomplete="off" required>
+            <input type="text" class="location-search-input" placeholder="Search by name, ID, or studio..." autocomplete="off" required>
             <input type="hidden" name="location_id" class="location-hidden-id">
             <div class="suggestions"></div>
         </div>
 
         <label>Booking Date</label>
-        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" required>
+        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" required>
 
         <label>Start Time (10:00 - 22:00)</label>
-        <input type="time" name="start_time" min="10:00" max="22:00" required>
+        <select name="start_time" required>
+            <option value="">-- Select a start time --</option>
+            <?php foreach (Booking::hourlyStartSlots() as $slot): ?>
+                <option value="<?= h($slot) ?>"><?= h($slot) ?></option>
+            <?php endforeach; ?>
+        </select>
 
         <label>Duration (hours, 1-12)</label>
         <input type="number" name="duration" min="1" max="12" value="1" required>

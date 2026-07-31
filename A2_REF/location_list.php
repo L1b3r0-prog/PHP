@@ -41,7 +41,7 @@ require __DIR__ . '/includes/header.php';
         <tr>
             <td><?= h((string)$loc['location_id']) ?></td>
             <td><?= h($loc['description']) ?></td>
-            <td><?= h((string)$loc['num_studios']) ?></td>
+            <td><?= h(implode(', ', Location::studioNames((int)$loc['location_id']))) ?></td>
             <td>$<?= h(number_format((float)$loc['cost_per_hour'], 2)) ?></td>
             <?php if (current_user_type() === 'admin'): ?>
             <td><a href="location_edit.php?id=<?= (int)$loc['location_id'] ?>">Edit</a></td>

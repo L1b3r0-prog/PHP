@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/includes/header.php';
 ?>
-<div class="card" style="max-width:480px;">
+<div class="card" style="max-width:480px;margin:0 auto;">
     <h1>Edit Location #<?= (int)$locationId ?></h1>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
     <form method="post">
@@ -50,7 +50,7 @@ require __DIR__ . '/includes/header.php';
     <p><small>Note: reducing studio count only removes studios that have no booking history.</small></p>
 </div>
 
-<div class="card" style="max-width:480px;">
+<div class="card" style="max-width:480px;margin:0 auto;">
     <h2>Studios at this location</h2>
     <p><small>Give a studio a custom name (e.g. "Vocal Booth"), or leave blank to show it as "Studio N".</small></p>
     <?php foreach (Studio::forLocation($locationId) as $studio): ?>

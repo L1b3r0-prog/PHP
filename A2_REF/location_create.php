@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/includes/header.php';
 ?>
-<div class="card" style="max-width:480px;">
+<div class="card" style="max-width:480px;margin:0 auto;">
     <h1>Add Location</h1>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
     <form method="post">

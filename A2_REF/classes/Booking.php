@@ -13,6 +13,27 @@ class Booking {
     public const CLOSE_TIME = '22:00:00';
     public const MIN_HOURS  = 1;
     public const MAX_HOURS  = 12;
+    public const MAX_ADVANCE_MONTHS = 6;
+
+    /** Latest date a booking may be made for, as a Y-m-d string */
+    public static function maxBookingDate(): string {
+        return date('Y-m-d', strtotime('+' . self::MAX_ADVANCE_MONTHS . ' months'));
+    }
+
+    /**
+     * Valid hourly start-time slots, e.g. ['10:00','11:00', ... '21:00'].
+     * Stops at 21:00 since the shortest session is 1 hour and sessions
+     * must end by 22:00 -- so 21:00 is the latest possible start.
+     */
+    public static function hourlyStartSlots(): array {
+        $slots = [];
+        $openHour = (int)substr(self::OPEN_TIME, 0, 2);
+        $closeHour = (int)substr(self::CLOSE_TIME, 0, 2);
+        for ($h = $openHour; $h < $closeHour; $h++) {
+            $slots[] = sprintf('%02d:00', $h);
+        }
+        return $slots;
+    }
 
     /**
      * Validates booking input against the business rules.
@@ -24,6 +45,10 @@ class Booking {
         $today = date('Y-m-d');
         if ($date < $today) {
             $errors[] = 'Booking date cannot be in the past.';
+        }
+
+        if ($date > self::maxBookingDate()) {
+            $errors[] = 'Bookings can only be made up to ' . self::MAX_ADVANCE_MONTHS . ' months in advance.';
         }
 
         if ($duration < self::MIN_HOURS || $duration > self::MAX_HOURS) {

@@ -26,7 +26,20 @@
             $errors = [];
             if (trim($name) === "") $errors[] = "Name is required.";
             if (!preg_match('/^[0-9+\-\s]{6,20}$/', $phone)) $errors[] = "Phone number is invalid.";
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email address is invalid.";
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Email address is invalid.';
+            } else {
+                $domain = strtolower(substr(strrchr($email, '@'), 1));
+                if ($type === 'admin') {
+                    if ($domain !== self::ADMIN_EMAIL_DOMAIN) {
+                        $errors[] = 'Administrator accounts must use an @' . self::ADMIN_EMAIL_DOMAIN . ' email address.';
+                    }
+                } else {
+                    if (!in_array($domain, self::CLIENT_EMAIL_DOMAINS, true)) {
+                        $errors[] = 'Please use a personal email address (Gmail, Hotmail, Outlook, Yahoo, etc.).';
+                    }
+                }
+            }
             if (strlen($password) < 6) $errors[] = "Password must be at least 6 characters.";
             return $errors;
         }

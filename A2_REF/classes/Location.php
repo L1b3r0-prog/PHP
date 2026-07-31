@@ -49,10 +49,10 @@ class Location {
         return $row ?: null;
     }
 
-    /** All locations */
+    /** All locations, newest (highest ID) first */
     public static function all(): array {
         $db = Database::getConnection();
-        return $db->query('SELECT * FROM locations ORDER BY description')->fetchAll();
+        return $db->query('SELECT * FROM locations ORDER BY location_id ASC')->fetchAll();
     }
 
     /**
@@ -71,7 +71,7 @@ class Location {
                           AND TIMESTAMP(b.booking_date, b.end_time)   > NOW()
                     )
                 )
-                ORDER BY l.description";
+                ORDER BY l.location_id ASC";
         return $db->query($sql)->fetchAll();
     }
 
@@ -88,38 +88,53 @@ class Location {
                           AND TIMESTAMP(b.booking_date, b.end_time)   > NOW()
                     )
                 )
-                ORDER BY l.description";
+                ORDER BY l.location_id ASC";
         return $db->query($sql)->fetchAll();
     }
 
     /**
      * Partial-match search across LocationID and Description.
+     * Description also matches against studio labels within that location
+     * (e.g. searching "vocal" finds a location because one of its studios
+     * is named "Vocal Booth"), so results can surface via studio name too.
      * Any field left blank is ignored (combination search).
      */
     public static function search(string $locationId = '', string $description = ''): array {
         $db = Database::getConnection();
-        $sql = 'SELECT * FROM locations WHERE 1=1';
+        $sql = 'SELECT * FROM locations l WHERE 1=1';
         $params = [];
 
         if ($locationId !== '') {
-            $sql .= ' AND location_id LIKE ?';
+            $sql .= ' AND l.location_id LIKE ?';
             $params[] = '%' . $locationId . '%';
         }
         if ($description !== '') {
-            $sql .= ' AND description LIKE ?';
+            $sql .= ' AND (l.description LIKE ?
+                        OR EXISTS (SELECT 1 FROM studios s WHERE s.location_id = l.location_id AND s.label LIKE ?))';
+            $params[] = '%' . $description . '%';
             $params[] = '%' . $description . '%';
         }
 
-        $sql .= ' ORDER BY description';
+        $sql .= ' ORDER BY l.location_id ASC';
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
+    /** Studio display names for a location, e.g. ["Vocal Booth", "Live Room", "Studio 3"] */
+    public static function studioNames(int $locationId): array {
+        $studios = Studio::forLocation($locationId);
+        return array_map(
+            fn($s) => Studio::displayName($s['label'], $s['studio_number']),
+            $studios
+        );
+    }
+
     /**
      * Type-ahead search used by ajax_location_search.php: matches a location's
-     * own description OR the custom label of any studio inside it (e.g. typing
-     * "vocal" finds the location that has a studio named "Vocal Booth").
+     * ID, its description, OR the custom label of any studio inside it (e.g.
+     * typing "vocal" finds the location that has a studio named "Vocal Booth",
+     * typing "2" finds location ID 2).
      * Returns each location plus which studio label matched, if any.
      */
     public static function searchWithStudios(string $term): array {
@@ -129,12 +144,13 @@ class Location {
                         WHERE s.location_id = l.location_id AND s.label LIKE ?
                         LIMIT 1) AS matched_studio_label
                 FROM locations l
-                WHERE l.description LIKE ?
+                WHERE l.location_id LIKE ?
+                   OR l.description LIKE ?
                    OR EXISTS (SELECT 1 FROM studios s WHERE s.location_id = l.location_id AND s.label LIKE ?)
-                ORDER BY l.description";
+                ORDER BY l.location_id ASC";
         $like = '%' . $term . '%';
         $stmt = $db->prepare($sql);
-        $stmt->execute([$like, $like, $like]);
+        $stmt->execute([$like, $like, $like, $like]);
         return $stmt->fetchAll();
     }
 }

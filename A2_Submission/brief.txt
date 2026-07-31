@@ -15,21 +15,31 @@ Admin able to create more locations and create/edit/cancel bookings
 
 For login, only ID? and no password check
 
-
+in schema.sql, change name of the studio
 
 
 ------------------------------
 Check if there are extra requirements or logic checks required before submitting
 ------------------------------
-No warning labels if wrong (wrong username/password)
-Email not verifying properly (must be @gmail/hotmail etc)
-Admin shouldn't be able to register an acc (only admin can create another admin account)
+No warning labels if wrong (wrong username/password) - ✔
+Email not verifying properly (must be @gmail/hotmail etc) - ✔
+Admin shouldn't be able to register an acc (only admin can create another admin account) - ✔
 
-Location selection not on preferred search by bitch (needs to be able to search by name or location or type)
+Location selection not on preferred search by bitch (needs to be able to search by name or location or type) - in progress
 
-Phone number regex (must be 8 digits, no more, no less)
+Phone number regex (must be 8 digits, no more, no less) - ✔
 
-booking timing cannot be in the past, and cannot be too far in the future (no more than 6 months)
+booking timing cannot be in the past, and cannot be too far in the future (no more than 6 months) - ✔
+
+locations should be shown in form of ID instead of description names (descending) in the locations - ✔
+
+for logout, back button shouldnt allow user to go back to when they are logged in 
+(basically once logged out shouldnt be able to go back in and vice versa)
+
+if booking is modified, can others book ->
+if others cancel, can others book ->
+is booking timing overlapped?
+need to check if booking will work or not for past sessions
 
 How it all works
 ----------------------------

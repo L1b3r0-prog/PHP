@@ -71,8 +71,8 @@ CREATE TABLE bookings (
 -- Login: client@gmail.com / client123             (Client -- personal webmail)
 -- Hashes below are real bcrypt hashes (compatible with PHP password_verify)
 INSERT INTO users (name, phone, email, password, type) VALUES
-('System Admin', '0400000000', 'admin@myrecordingstudio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin'),
-('Jane Client', '0411111111', 'client@gmail.com', '$2b$10$ZJUm4M6WbpJRh2isztgcWue7GsZcp9r1QbGe6dK8GnP2rNpMCpCWO', 'client');
+('System Admin', '61234567', 'admin@myrecordingstudio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin'),
+('Jane Client', '81234567', 'client@gmail.com', '$2b$10$ZJUm4M6WbpJRh2isztgcWue7GsZcp9r1QbGe6dK8GnP2rNpMCpCWO', 'client');
 
 INSERT INTO locations (description, num_studios, cost_per_hour) VALUES
 ('Sydney CBD Studio', 3, 50.00),

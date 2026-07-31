@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/includes/header.php';
 ?>
-<div class="card" style="max-width:480px;">
+<div class="card" style="max-width:480px;margin:0 auto;">
     <h1>Modify Booking #<?= (int)$bookingId ?></h1>
     <p><?= h($booking['location_description']) ?> &mdash; <?= h(Studio::displayName($booking['studio_label'], $booking['studio_number'])) ?>
        <?php if (current_user_type() === 'admin'): ?> &mdash; Client: <?= h($booking['client_name']) ?><?php endif; ?></p>
@@ -53,10 +53,14 @@ require __DIR__ . '/includes/header.php';
         <input type="hidden" name="booking_id" value="<?= (int)$bookingId ?>">
 
         <label>Booking Date</label>
-        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" value="<?= h($booking['booking_date']) ?>" required>
+        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" value="<?= h($booking['booking_date']) ?>" required>
 
         <label>Start Time (10:00 - 22:00)</label>
-        <input type="time" name="start_time" min="10:00" max="22:00" value="<?= h(substr($booking['start_time'],0,5)) ?>" required>
+        <select name="start_time" required>
+            <?php foreach (Booking::hourlyStartSlots() as $slot): ?>
+                <option value="<?= h($slot) ?>" <?= substr($booking['start_time'],0,5) === $slot ? 'selected' : '' ?>><?= h($slot) ?></option>
+            <?php endforeach; ?>
+        </select>
 
         <label>Duration (hours, 1-12)</label>
         <input type="number" name="duration" min="1" max="12" value="<?= h((string)$booking['duration_hours']) ?>" required>

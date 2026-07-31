@@ -1,5 +1,13 @@
 <?php
 // bootstrap.php - included at the top of every page.
+
+// Prevent the browser from caching protected pages. Without this, clicking
+// "back" after logout can show a stale, cached copy of a page instead of
+// re-requesting it from the server -- which would skip require_login()
+// entirely and let a logged-out user see content that should be blocked.
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

@@ -12,7 +12,7 @@ require __DIR__ . '/includes/header.php';
 ?>
 <div class="card">
     <h1>Search Locations</h1>
-    <p>Search by Location ID and/or Description. Partial matches allowed. Leave a field blank to ignore it.</p>
+    <p>Search by Location ID and/or Description. Description also matches studio names (e.g. "Vocal Booth"). Partial matches allowed. Leave a field blank to ignore it.</p>
     <form method="get" class="search-form">
         <div>
             <label>Location ID</label>
@@ -40,7 +40,7 @@ require __DIR__ . '/includes/header.php';
         <tr>
             <td><?= h((string)$loc['location_id']) ?></td>
             <td><?= h($loc['description']) ?></td>
-            <td><?= h((string)$loc['num_studios']) ?></td>
+            <td><?= h(implode(', ', Location::studioNames((int)$loc['location_id']))) ?></td>
             <td>$<?= h(number_format((float)$loc['cost_per_hour'], 2)) ?></td>
         </tr>
         <?php endforeach; ?>
