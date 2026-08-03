@@ -40,7 +40,7 @@ require __DIR__ . '/includes/header.php';
         <input type="text" name="name" value="<?= h($_POST['name'] ?? '') ?>" required>
 
         <label>Phone (up to 8 digits)</label>
-        <input type="text" name="phone" maxlength="8" pattern="[0-9]{1,8}" inputmode="numeric" value="<?= h($_POST['phone'] ?? '') ?>" required>
+        <input type="text" name="phone" maxlength="8" pattern="[0-9]{1,8}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" value="<?= h($_POST['phone'] ?? '') ?>" required>
 
         <label>Email (Gmail, Hotmail, Outlook, Yahoo, etc.)</label>
         <input type="email" name="email" value="<?= h($_POST['email'] ?? '') ?>" required>

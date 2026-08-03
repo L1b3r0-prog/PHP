@@ -111,7 +111,14 @@ class Booking {
      * Returns booking_id on success, throws Exception with a user-facing
      * message on validation/availability failure.
      */
-    public static function create(int $locationId, int $clientId, string $date, string $startTime, int $duration): int {
+    /**
+     * Creates a booking. If $preferredStudioId is given (the client chose a
+     * specific studio), that exact studio is booked -- re-checked here for
+     * availability in case it was taken between the client's availability
+     * check and this submission. If null, falls back to auto-assigning the
+     * first free studio (used by admin bookings and as a safe default).
+     */
+    public static function create(int $locationId, int $clientId, string $date, string $startTime, int $duration, ?int $preferredStudioId = null): int {
         $errors = self::validate($date, $startTime, $duration);
         if (!empty($errors)) {
             throw new Exception(implode(' ', $errors));
@@ -128,9 +135,22 @@ class Booking {
         $start = date('H:i:s', strtotime($startTime));
         $end = self::calculateEndTime($start, $duration);
 
-        $studioId = Studio::findAvailable($locationId, $date, $start, $end);
-        if ($studioId === null) {
-            throw new Exception('No studio is available at this location for the selected time slot.');
+        if ($preferredStudioId !== null) {
+            $studioStmt = $db->prepare('SELECT * FROM studios WHERE studio_id = ? AND location_id = ?');
+            $studioStmt->execute([$preferredStudioId, $locationId]);
+            $studio = $studioStmt->fetch();
+            if (!$studio) {
+                throw new Exception('Selected studio does not belong to this location.');
+            }
+            if (self::hasOverlap($preferredStudioId, $date, $start, $end)) {
+                throw new Exception('That studio was just booked by someone else for this time slot. Please choose another.');
+            }
+            $studioId = $preferredStudioId;
+        } else {
+            $studioId = Studio::findAvailable($locationId, $date, $start, $end);
+            if ($studioId === null) {
+                throw new Exception('No studio is available at this location for the selected time slot.');
+            }
         }
 
         $cost = self::calculateCost($duration, (float)$location['cost_per_hour']);

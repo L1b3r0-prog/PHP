@@ -42,6 +42,7 @@ class Studio {
     /**
      * Finds the first studio at a location that is free for the requested
      * date/time range. Returns studio_id, or null if none available.
+     * Used as the fallback when a booking is made without an explicit choice.
      */
     public static function findAvailable(int $locationId, string $date, string $startTime, string $endTime): ?int {
         $db = Database::getConnection();
@@ -55,6 +56,22 @@ class Studio {
             }
         }
         return null;
+    }
+
+    /**
+     * Every studio at a location that is free for the requested date/time
+     * range -- used to let the client choose which specific studio to book,
+     * rather than always auto-assigning the first free one.
+     */
+    public static function allAvailable(int $locationId, string $date, string $startTime, string $endTime): array {
+        $studios = self::forLocation($locationId);
+        $available = [];
+        foreach ($studios as $studio) {
+            if (!Booking::hasOverlap((int)$studio['studio_id'], $date, $startTime, $endTime)) {
+                $available[] = $studio;
+            }
+        }
+        return $available;
     }
 
     /** Creates the N studio rows for a newly created location */

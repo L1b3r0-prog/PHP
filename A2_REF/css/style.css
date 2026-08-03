@@ -11,7 +11,7 @@
     --paper: #f5f4f1;
     --card: #ffffff;
     --amber: #e7a33e;
-    --amber-dark: #2c56b0;
+    --amber-dark: #e7a33e;
     --teal: #0e8074;
     --text: #1b1f24;
     --muted: #6b7280;
@@ -77,7 +77,6 @@ select:focus-visible, textarea:focus-visible {
     align-items: center;
     flex-wrap: wrap;
     gap: 4px;
-    margin-left: auto;
 }
 .site-header nav a {
     color: #c7ccd3;
