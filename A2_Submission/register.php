@@ -38,7 +38,7 @@
         <label>Full Name</label>
         <input type="text" name="name" value="<?= h($_POST["name"] ?? "") ?>" required>
 
-        <label>Phone Number</label>
+        <label>Phone number</label>
         <input type="text" name="phone" value="<?= h($_POST["phone"] ?? "") ?>" required>
 
         <label>Email</label>
