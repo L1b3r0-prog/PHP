@@ -48,7 +48,7 @@ abstract class User {
     public static function validate(string $name, string $phone, string $email, string $password, string $type = 'client'): array {
         $errors = [];
         if (trim($name) === '') $errors[] = 'Name is required.';
-        if (!preg_match('/^[0-9]{1,8}$/', $phone)) $errors[] = 'Phone number must be numeric and 8 digits.';
+        if (!preg_match('/^[0-9]{1,8}$/', $phone)) $errors[] = 'Phone number must be numeric and at most 8 digits.';
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Email address is invalid.';

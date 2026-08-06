@@ -13,7 +13,7 @@ if ($studioId <= 0 || $locationId <= 0) {
 }
 
 if (strlen($label) > 50) {
-    $_SESSION['flash_error'] = 'Studio name must be 50 characters or less.';
+    $_SESSION['flash_error'] = 'Studio name must be 50 characters or fewer.';
 } else {
     Studio::rename($studioId, $label);
     $_SESSION['flash_success'] = $label === '' ? 'Studio name cleared.' : 'Studio renamed to "' . $label . '".';

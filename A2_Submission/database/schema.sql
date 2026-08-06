@@ -37,6 +37,7 @@ CREATE TABLE studios (
     studio_id       INT AUTO_INCREMENT PRIMARY KEY,
     location_id     INT NOT NULL,
     studio_number   INT NOT NULL,
+    label           VARCHAR(50) NULL,
     FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE,
     UNIQUE (location_id, studio_number)
 );
@@ -66,19 +67,26 @@ CREATE TABLE bookings (
 -- Sample data
 -- ------------------------------------------------------------
 
--- Login: admin@studio.com / admin123    (Administrator)
--- Login: client@studio.com / client123  (Client)
+-- Login: admin@myrecordingstudio.com / admin123  (Administrator -- company domain)
+-- Login: client@gmail.com / client123             (Client -- personal webmail)
 -- Hashes below are real bcrypt hashes (compatible with PHP password_verify)
 INSERT INTO users (name, phone, email, password, type) VALUES
-('System Admin', '0400000000', 'admin@studio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin'),
-('Jane Client', '0411111111', 'client@studio.com', '$2b$10$ZJUm4M6WbpJRh2isztgcWue7GsZcp9r1QbGe6dK8GnP2rNpMCpCWO', 'client');
+('System Admin', '61234567', 'admin@myrecordingstudio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin');
 
 INSERT INTO locations (description, num_studios, cost_per_hour) VALUES
-('Sydney CBD Studio', 3, 50.00),
-('Parramatta Recording Hub', 2, 40.00),
-('Wollongong Sound House', 4, 35.00);
+('Bedok Studio', 3, 50.00),
+('Clementi Records', 2, 40.00),
+('Punggol Vids', 4, 35.00);
 
 INSERT INTO studios (location_id, studio_number) VALUES
 (1,1),(1,2),(1,3),
 (2,1),(2,2),
 (3,1),(3,2),(3,3),(3,4);
+
+-- ------------------------------------------------------------
+-- Only if needed (check with lecturer)
+-- ------------------------------------------------------------
+/*
+UPDATE studios SET label = 'Vocal Booth' WHERE location_id = 1 AND studio_number = 1;
+UPDATE studios SET label = 'Live Room'   WHERE location_id = 1 AND studio_number = 2;
+*/

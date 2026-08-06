@@ -282,8 +282,6 @@ table a:hover { text-decoration: underline; }
 }
 .badge-active { background: var(--success-bg); color: var(--success); }
 .badge-cancelled { background: var(--error-bg); color: var(--error); }
-.badge-pending { background: #e7f0fa; color: var(--teal); }
-.badge-completed { background: #eceef1; color: var(--muted); }
 
 /* ---------------- Footer ---------------- */
 .site-footer {

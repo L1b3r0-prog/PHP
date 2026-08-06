@@ -33,13 +33,15 @@ booking timing cannot be in the past, and cannot be too far in the future (no mo
 
 locations should be shown in form of ID instead of description names (descending) in the locations - ✔
 
-for logout, back button shouldnt allow user to go back to when they are logged in 
+for logout, back button shouldnt allow user to go back to when they are logged in - ✔
 (basically once logged out shouldnt be able to go back in and vice versa)
 
-if booking is modified, can others book ->
-if others cancel, can others book ->
+if booking is modified, can others book - ✔
+if others cancel, can others book - ✔
 is booking timing overlapped?
 need to check if booking will work or not for past sessions
+
+booking shouldnt be able to book for past timing
 
 How it all works
 ----------------------------
