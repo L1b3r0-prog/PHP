@@ -1,3 +1,1 @@
-for the location's studio name, does it have to be initialized with a name or can be left defaulted at the start and then changed later
-for the user and admin, should there be a way to edit information
-for the user and admin, should their ID be shown along with their name
+for the database, can it be what i have
