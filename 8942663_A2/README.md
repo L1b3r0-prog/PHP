@@ -53,3 +53,14 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 - "Currently available/fully booked" and "clients currently active" are evaluated against the live server clock (`NOW()`), per the assignment wording ("currently using a studio").
 - No payment functionality, per the brief.
 - This is a reference/teaching build — read through it, understand every method, and be ready to explain and modify it live, since the brief requires answering the tutor's questions.
+
+
+
+
+
+
+--------------------------------
+FOR SUBMISSION
+--------------------------------
+For the database, change it so that there is data when exporting
+and for exporting ensure that under custom and object creation options, Add Create Database / USE option is enablad
