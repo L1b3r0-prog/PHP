@@ -1,0 +1,317 @@
+/* ==========================================================
+   MyRecordingStudio -- design tokens
+   Palette:  ink (header/control-room), paper (page bg),
+             amber (primary/CTA), teal (links/secondary)
+   Type:     Space Grotesk (display), Inter (body/UI),
+             IBM Plex Mono (tabular/data -- session-sheet motif)
+   ========================================================== */
+:root {
+    --ink: #1e2a44;
+    --ink-soft: #2a3b5c;
+    --paper: #f5f4f1;
+    --card: #ffffff;
+    --amber: #e7a33e;
+    --amber-dark: #e7a33e;
+    --teal: #0e8074;
+    --text: #1b1f24;
+    --muted: #6b7280;
+    --border: #e3e1db;
+    --success: #2f9e6e;
+    --success-bg: #e7f5ef;
+    --error: #d64550;
+    --error-bg: #fbeaec;
+
+    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--paper);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* Visible keyboard focus everywhere -- accessibility floor */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* ---------------- Header / nav ("control room") ---------------- */
+.site-header {
+    background: var(--ink);
+    color: #eef0f2;
+}
+.header-bar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.brand a {
+    font-family: var(--font-display);
+    color: #fff;
+    font-size: 1.25em;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+}
+.brand a span { color: var(--amber); }
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.site-header nav a {
+    color: #c7ccd3;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.site-header nav a:hover { color: #fff; background: var(--ink-soft); }
+.site-header nav a.nav-cta {
+    background: var(--amber);
+    color: var(--ink);
+    font-weight: 600;
+}
+.site-header nav a.nav-cta:hover { background: var(--amber-dark); color: var(--ink); }
+.site-header nav a.nav-logout { color: #e3a5ab; }
+.site-header nav a.nav-logout:hover { background: var(--ink-soft); color: #ff8b95; }
+
+.user-info {
+    color: #9aa1ab;
+    font-size: 0.85em;
+    padding: 8px 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.role-chip {
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--ink-soft);
+    color: var(--amber);
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+/* ---------------- Layout ---------------- */
+.container {
+    max-width: 1000px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+h1 { font-size: 1.7em; margin-top: 0; }
+h2 { font-size: 1.25em; }
+
+p { color: var(--text); }
+small, p small { color: var(--muted); }
+
+/* ---------------- Cards ---------------- */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(20, 23, 28, 0.04);
+}
+
+/* ---------------- Forms ---------------- */
+form label {
+    display: block;
+    margin-top: 14px;
+    font-weight: 600;
+    font-size: 0.85em;
+    color: var(--ink);
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 9px 11px;
+    margin-top: 5px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1em;
+    font-family: var(--font-body);
+    background: var(--card);
+    color: var(--text);
+    transition: border-color 0.15s ease;
+}
+form input:focus, form select:focus, form textarea:focus {
+    border-color: var(--amber);
+}
+
+/* ---------------- Buttons ---------------- */
+.btn {
+    display: inline-block;
+    background: var(--amber);
+    color: var(--ink);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.92em;
+    text-decoration: none;
+    margin-top: 18px;
+    transition: background-color 0.15s ease, transform 0.05s ease;
+}
+.btn:hover { background: var(--amber-dark); }
+.btn:active { transform: translateY(1px); }
+.btn-danger { background: var(--error); color: #fff; }
+.btn-danger:hover { background: #b8323c; }
+.btn-secondary { background: var(--ink); color: #fff; }
+.btn-secondary:hover { background: var(--ink-soft); }
+
+/* ---------------- Tables (studio "session sheet" motif: data in mono) ---------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 8px;
+    overflow: hidden;
+}
+table th, table td {
+    text-align: left;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+}
+table th {
+    background: var(--paper);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+}
+table tr:last-child td { border-bottom: none; }
+table tr:hover td { background: #fbfaf8; }
+table a { color: var(--teal); text-decoration: none; font-family: var(--font-body); font-weight: 500; }
+table a:hover { text-decoration: underline; }
+
+/* ---------------- Alerts ---------------- */
+.alert {
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 0.92em;
+    border: 1px solid transparent;
+}
+.alert-error { background: var(--error-bg); color: var(--error); border-color: #f2c6cb; }
+.alert-success { background: var(--success-bg); color: var(--success); border-color: #bfe4d3; }
+
+/* Inline validation errors raised by JS (replaces native alert() popups so
+   client-side and server-side errors share the same visual language). */
+.form-error {
+    display: none;
+    background: var(--error-bg);
+    color: var(--error);
+    border: 1px solid #f2c6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 0.88em;
+}
+.form-error.visible { display: block; }
+
+/* ---------------- Search / autocomplete ---------------- */
+.search-form {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+.search-form > div { flex: 1; min-width: 180px; }
+
+.autocomplete { position: relative; }
+.suggestions {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 20;
+    box-shadow: 0 8px 16px rgba(20, 23, 28, 0.08);
+}
+.suggestion-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: var(--paper); }
+.suggestion-item strong { font-family: var(--font-body); font-size: 0.95em; }
+.suggestion-item span { font-family: var(--font-mono); font-size: 0.78em; color: var(--muted); }
+
+/* ---------------- Badges ---------------- */
+.badge {
+    font-family: var(--font-mono);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.badge-active { background: var(--success-bg); color: var(--success); }
+.badge-cancelled { background: var(--error-bg); color: var(--error); }
+
+/* ---------------- Footer ---------------- */
+.site-footer {
+    text-align: center;
+    padding: 28px 20px;
+    color: var(--muted);
+    font-size: 0.82em;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 640px) {
+    .header-bar { flex-direction: column; align-items: flex-start; }
+    .site-header nav { gap: 2px; }
+    .container { margin: 20px auto; padding: 0 14px; }
+    .card { padding: 18px; }
+    table th, table td { padding: 9px 8px; font-size: 0.85em; }
+}
