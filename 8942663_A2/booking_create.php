@@ -72,8 +72,6 @@ require __DIR__ . '/includes/header.php';
             <label>Duration (hours, 1-12)</label>
             <input type="number" name="duration" min="1" max="12" value="<?= h($_POST['duration'] ?? '1') ?>" required>
 
-            <p><small>Want to pick a specific studio? Click "Check Available Studios" below. Skip it and Confirm Booking will assign you the first free studio automatically.</small></p>
-
             <button class="btn btn-secondary" type="button" id="check-availability-btn">Check Available Studios</button>
 
             <div id="studio-picker" style="display:none;margin-top:16px;">
