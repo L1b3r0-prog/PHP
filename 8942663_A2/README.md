@@ -64,3 +64,6 @@ FOR SUBMISSION
 --------------------------------
 For the database, change it so that there is data when exporting
 and for exporting ensure that under custom and object creation options, Add Create Database / USE option is enablad
+
+Ensure before exporting that there is data inside
+Test everything and ensure that it is all working before submission
