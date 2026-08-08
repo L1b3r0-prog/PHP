@@ -35,22 +35,21 @@ require __DIR__ . '/includes/header.php';
     <?php foreach ($errors as $error): ?>
         <div class="alert alert-error"><?= h($error) ?></div>
     <?php endforeach; ?>
-    <form method="post" data-validate>
-        <label>Name</label>
-        <input type="text" name="name" data-label="Name" value="<?= h($_POST['name'] ?? '') ?>" required>
+    <form method="post">
+        <label>Full Name</label>
+        <input type="text" name="name" value="<?= h($_POST['name'] ?? '') ?>" required>
 
-        <label>Phone number</label>
-        <input type="text" name="phone" data-label="Phone number" maxlength="8" pattern="[0-9]{1,8}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" value="<?= h($_POST['phone'] ?? '') ?>" required>
+        <label>Phone (up to 8 digits)</label>
+        <input type="text" name="phone" maxlength="8" pattern="[0-9]{1,8}" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')" value="<?= h($_POST['phone'] ?? '') ?>" required>
 
-        <label>Email</label>
-        <input type="email" name="email" data-label="Email" value="<?= h($_POST['email'] ?? '') ?>" required>
+        <label>Email (Gmail, Hotmail, Outlook, Yahoo, etc.)</label>
+        <input type="email" name="email" value="<?= h($_POST['email'] ?? '') ?>" required>
 
         <label>Password</label>
-        <input type="password" name="password" data-label="Password" required>
+        <input type="password" name="password" required>
 
         <button class="btn" type="submit">Register</button>
     </form>
     <p style="margin-top:16px;">Already have an account? <a href="login.php">Login here</a></p>
 </div>
-<script src="assets/form-validation.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

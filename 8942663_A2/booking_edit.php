@@ -49,24 +49,23 @@ require __DIR__ . '/includes/header.php';
     <p><?= h($booking['location_description']) ?> &mdash; <?= h(Studio::displayName($booking['studio_label'], $booking['studio_number'])) ?>
        <?php if (current_user_type() === 'admin'): ?> &mdash; Client: <?= h($booking['client_name']) ?><?php endif; ?></p>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
-    <form method="post" data-validate>
+    <form method="post">
         <input type="hidden" name="booking_id" value="<?= (int)$bookingId ?>">
 
         <label>Booking Date</label>
-        <input type="date" name="booking_date" data-label="Booking date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" value="<?= h($booking['booking_date']) ?>" required>
+        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" value="<?= h($booking['booking_date']) ?>" required>
 
         <label>Start Time (10:00 - 22:00)</label>
-        <select name="start_time" data-label="Start time" required>
+        <select name="start_time" required>
             <?php foreach (Booking::hourlyStartSlots() as $slot): ?>
                 <option value="<?= h($slot) ?>" <?= substr($booking['start_time'],0,5) === $slot ? 'selected' : '' ?>><?= h($slot) ?></option>
             <?php endforeach; ?>
         </select>
 
         <label>Duration (hours, 1-12)</label>
-        <input type="number" name="duration" data-label="Duration" min="1" max="12" value="<?= h((string)$booking['duration_hours']) ?>" required>
+        <input type="number" name="duration" min="1" max="12" value="<?= h((string)$booking['duration_hours']) ?>" required>
 
         <button class="btn" type="submit">Save Changes</button>
     </form>
 </div>
-<script src="assets/form-validation.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

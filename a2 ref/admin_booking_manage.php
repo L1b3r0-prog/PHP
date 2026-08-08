@@ -88,8 +88,7 @@ require __DIR__ . '/includes/header.php';
             <td><?= h(Studio::displayName($b['studio_label'], $b['studio_number'])) ?></td>
             <td><?= h($b['booking_date']) ?></td>
             <td><?= h(substr($b['start_time'],0,5)) ?>-<?= h(substr($b['end_time'],0,5)) ?></td>
-            <?php $displayStatus = $b['status'] === 'active' ? Booking::timeStatus($b) : 'cancelled'; ?>
-            <td><span class="badge badge-<?= h($displayStatus) ?>"><?= h($displayStatus) ?></span></td>
+            <td><span class="badge badge-<?= $b['status'] === 'active' ? 'active' : 'cancelled' ?>"><?= h($b['status']) ?></span></td>
             <td>
                 <?php if ($b['status'] === 'active' && !Booking::hasStarted($b)): ?>
                     <a href="booking_edit.php?id=<?= (int)$b['booking_id'] ?>">Modify</a> |

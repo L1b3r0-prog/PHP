@@ -24,18 +24,17 @@ require __DIR__ . '/includes/header.php';
 <div class="card" style="max-width:480px;margin:0 auto;">
     <h1>Add Location</h1>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
-    <form method="post" data-validate>
+    <form method="post">
         <label>Description</label>
-        <input type="text" name="description" data-label="Description" value="<?= h($_POST['description'] ?? '') ?>" required>
+        <input type="text" name="description" value="<?= h($_POST['description'] ?? '') ?>" required>
 
         <label>Number of Studios</label>
-        <input type="number" name="num_studios" data-label="Number of studios" min="1" value="<?= h($_POST['num_studios'] ?? '1') ?>" required>
+        <input type="number" name="num_studios" min="1" value="<?= h($_POST['num_studios'] ?? '1') ?>" required>
 
         <label>Cost per Hour ($)</label>
-        <input type="number" step="0.01" min="0" name="cost_per_hour" data-label="Cost per hour" value="<?= h($_POST['cost_per_hour'] ?? '') ?>" required>
+        <input type="number" step="0.01" min="0" name="cost_per_hour" value="<?= h($_POST['cost_per_hour'] ?? '') ?>" required>
 
         <button class="btn" type="submit">Create Location</button>
     </form>
 </div>
-<script src="assets/form-validation.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

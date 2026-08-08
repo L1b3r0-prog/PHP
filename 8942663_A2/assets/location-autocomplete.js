@@ -9,23 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let debounceTimer = null;
         let activeResults = [];
 
-        // Inline error element, styled like the rest of the site's alerts,
-        // shown next to the field instead of a native alert() popup.
-        let errorEl = container.querySelector('.form-error');
-        if (!errorEl) {
-            errorEl = document.createElement('div');
-            errorEl.className = 'form-error';
-            container.insertAdjacentElement('afterend', errorEl);
-        }
-        function showError(message) {
-            errorEl.textContent = message;
-            errorEl.classList.add('visible');
-        }
-        function clearError() {
-            errorEl.textContent = '';
-            errorEl.classList.remove('visible');
-        }
-
         function renderSuggestions(results) {
             activeResults = results;
             if (results.length === 0) {
@@ -48,12 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
             hiddenId.value = loc.location_id;
             searchBox.value = loc.description;
             suggestions.style.display = 'none';
-            clearError();
         }
 
         searchBox.addEventListener('input', function () {
             hiddenId.value = '';
-            clearError();
             const term = searchBox.value.trim();
             clearTimeout(debounceTimer);
             if (term === '') {
@@ -84,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
             form.addEventListener('submit', function (e) {
                 if (!hiddenId.value) {
                     e.preventDefault();
-                    showError('Please select a location from the suggestions list.');
-                    searchBox.focus();
+                    alert('Please select a location from the suggestions list.');
                 }
             });
         }
