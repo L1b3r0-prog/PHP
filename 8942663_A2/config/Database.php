@@ -22,11 +22,6 @@ class Database {
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 ]);
-                // Match MySQL's session clock to PHP's timezone (set in
-                // bootstrap.php) so NOW() agrees with PHP's date()/time().
-                // Without this, NOW() falls back to the MySQL server's own
-                // system clock, which may be on a different offset.
-                self::$connection->exec("SET time_zone = '+08:00'");
             } catch (PDOException $e) {
                 die('Database connection failed: ' . htmlspecialchars($e->getMessage()));
             }

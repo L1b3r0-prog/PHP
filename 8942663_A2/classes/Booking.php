@@ -223,23 +223,6 @@ class Booking {
         return strtotime($startDateTime) <= time();
     }
 
-    /**
-     * Time-based status for display, independent of the stored active/
-     * cancelled column: 'pending' (hasn't started yet), 'active' (session
-     * is currently in progress), or 'completed' (end time has passed).
-     * Only meaningful for non-cancelled bookings -- check $booking['status']
-     * === 'cancelled' separately before calling this.
-     */
-    public static function timeStatus(array $booking): string {
-        $now = time();
-        $start = strtotime($booking['booking_date'] . ' ' . $booking['start_time']);
-        $end = strtotime($booking['booking_date'] . ' ' . $booking['end_time']);
-
-        if ($now < $start) return 'pending';
-        if ($now < $end) return 'active';
-        return 'completed';
-    }
-
     public static function findById(int $bookingId): ?array {
         $db = Database::getConnection();
         $stmt = $db->prepare('SELECT * FROM bookings WHERE booking_id = ?');

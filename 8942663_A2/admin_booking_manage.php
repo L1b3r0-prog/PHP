@@ -42,9 +42,9 @@ require __DIR__ . '/includes/header.php';
         </div>
     <?php endif; ?>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
-    <form method="post">
+    <form method="post" data-validate>
         <label>Client</label>
-        <select name="client_id" required>
+        <select name="client_id" data-label="Client" required>
             <option value="">-- Select client --</option>
             <?php foreach ($clients as $c): ?>
                 <option value="<?= (int)$c['user_id'] ?>"><?= h($c['name']) ?> (<?= h($c['email']) ?>)</option>
@@ -53,16 +53,16 @@ require __DIR__ . '/includes/header.php';
 
         <label>Location</label>
         <div class="autocomplete" data-role="location-search">
-            <input type="text" class="location-search-input" placeholder="Search by name, ID, or studio..." autocomplete="off" required>
+            <input type="text" class="location-search-input" placeholder="Search by name, ID, or studio..." autocomplete="off" data-label="Location" required>
             <input type="hidden" name="location_id" class="location-hidden-id">
             <div class="suggestions"></div>
         </div>
 
         <label>Booking Date</label>
-        <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" required>
+        <input type="date" name="booking_date" data-label="Booking date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" required>
 
         <label>Start Time (10:00 - 22:00)</label>
-        <select name="start_time" required>
+        <select name="start_time" data-label="Start time" required>
             <option value="">-- Select a start time --</option>
             <?php foreach (Booking::hourlyStartSlots() as $slot): ?>
                 <option value="<?= h($slot) ?>"><?= h($slot) ?></option>
@@ -70,7 +70,7 @@ require __DIR__ . '/includes/header.php';
         </select>
 
         <label>Duration (hours, 1-12)</label>
-        <input type="number" name="duration" min="1" max="12" value="1" required>
+        <input type="number" name="duration" data-label="Duration" min="1" max="12" value="1" required>
 
         <button class="btn" type="submit">Create Booking</button>
     </form>
@@ -102,5 +102,6 @@ require __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
     </table>
 </div>
+<script src="assets/form-validation.js"></script>
 <script src="assets/location-autocomplete.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

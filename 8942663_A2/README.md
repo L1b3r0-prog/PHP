@@ -54,16 +54,26 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 - No payment functionality, per the brief.
 - This is a reference/teaching build — read through it, understand every method, and be ready to explain and modify it live, since the brief requires answering the tutor's questions.
 
+## Changelog (this copy)
 
-
-
-
-
---------------------------------
-FOR SUBMISSION
---------------------------------
-For the database, change it so that there is data when exporting
-and for exporting ensure that under custom and object creation options, Add Create Database / USE option is enablad
-
-Ensure before exporting that there is data inside
-Test everything and ensure that it is all working before submission
+- Replaced native `alert()` popups in `booking_create.php`'s inline script and
+  `assets/location-autocomplete.js` with inline `.form-error` messages styled
+  to match the site's existing `.alert-error` look. Client-side and
+  server-side validation errors now share one visual language instead of
+  mixing browser dialogs with in-page alerts. Destructive-action `confirm()`
+  dialogs (cancel booking) were left as native browser confirms, since that's
+  a distinct, standard pattern for "are you sure?" prompts.
+- Added `.form-error` / `.form-error.visible` rules to `css/style.css`.
+- Added `assets/form-validation.js`: intercepts native browser popups
+  triggered by `required` / `min` / `max` / `pattern` attributes (e.g.
+  picking a booking date in the past, duration outside 1-12, phone number
+  not matching the digit pattern, studio count/cost below the allowed
+  minimum) and reports them the same way as everything else, in an inline
+  `.form-error` box. Opt-in via `data-validate` on a `<form>`; if the script
+  fails to load, the form's original HTML attributes still validate
+  natively, so nothing goes unchecked. Wired into: `booking_create.php`,
+  `booking_edit.php`, `admin_booking_manage.php`, `location_create.php`,
+  `location_edit.php`, `register.php`, `admin_create.php`.
+- `login.php` left as native `required` only (email/password, no
+  min/max/pattern) -- that's ordinary browser behaviour, not the class of
+  issue being fixed here.

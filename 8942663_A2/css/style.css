@@ -233,6 +233,20 @@ table a:hover { text-decoration: underline; }
 .alert-error { background: var(--error-bg); color: var(--error); border-color: #f2c6cb; }
 .alert-success { background: var(--success-bg); color: var(--success); border-color: #bfe4d3; }
 
+/* Inline validation errors raised by JS (replaces native alert() popups so
+   client-side and server-side errors share the same visual language). */
+.form-error {
+    display: none;
+    background: var(--error-bg);
+    color: var(--error);
+    border: 1px solid #f2c6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 0.88em;
+}
+.form-error.visible { display: block; }
+
 /* ---------------- Search / autocomplete ---------------- */
 .search-form {
     display: flex;
@@ -282,8 +296,6 @@ table a:hover { text-decoration: underline; }
 }
 .badge-active { background: var(--success-bg); color: var(--success); }
 .badge-cancelled { background: var(--error-bg); color: var(--error); }
-.badge-pending { background: #e7f0fa; color: var(--teal); }
-.badge-completed { background: #eceef1; color: var(--muted); }
 
 /* ---------------- Footer ---------------- */
 .site-footer {

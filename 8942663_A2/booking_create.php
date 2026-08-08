@@ -50,19 +50,19 @@ require __DIR__ . '/includes/header.php';
         <p><a class="btn" href="booking_list_upcoming.php">View My Bookings</a> <a class="btn btn-secondary" href="booking_create.php">Book Another</a></p>
     <?php else: ?>
         <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
-        <form method="post" id="booking-form">
+        <form method="post" id="booking-form" data-validate>
             <label>Location</label>
             <div class="autocomplete" data-role="location-search">
-                <input type="text" class="location-search-input" placeholder="Search by name, ID, or studio..." autocomplete="off" required>
+                <input type="text" class="location-search-input" placeholder="Search by name, ID, or studio..." autocomplete="off" data-label="Location" required>
                 <input type="hidden" name="location_id" class="location-hidden-id">
                 <div class="suggestions"></div>
             </div>
 
             <label>Booking Date</label>
-            <input type="date" name="booking_date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" value="<?= h($_POST['booking_date'] ?? '') ?>" required>
+            <input type="date" name="booking_date" data-label="Booking date" min="<?= date('Y-m-d') ?>" max="<?= Booking::maxBookingDate() ?>" value="<?= h($_POST['booking_date'] ?? '') ?>" required>
 
             <label>Start Time (10:00 - 22:00)</label>
-            <select name="start_time" required>
+            <select name="start_time" data-label="Start time" required>
                 <option value="">-- Select a start time --</option>
                 <?php foreach (Booking::hourlyStartSlots() as $slot): ?>
                     <option value="<?= h($slot) ?>" <?= ($_POST['start_time'] ?? '') === $slot ? 'selected' : '' ?>><?= h($slot) ?></option>
@@ -70,15 +70,21 @@ require __DIR__ . '/includes/header.php';
             </select>
 
             <label>Duration (hours, 1-12)</label>
-            <input type="number" name="duration" min="1" max="12" value="<?= h($_POST['duration'] ?? '1') ?>" required>
+            <input type="number" name="duration" data-label="Duration" min="1" max="12" value="<?= h($_POST['duration'] ?? '1') ?>" required>
+
+            <p><small>Want to pick a specific studio? Click "Check Available Studios" below. Skip it and Confirm Booking will assign you the first free studio automatically.</small></p>
 
             <button class="btn btn-secondary" type="button" id="check-availability-btn">Check Available Studios</button>
+
+            <div class="form-error" id="availability-check-error"></div>
 
             <div id="studio-picker" style="display:none;margin-top:16px;">
                 <label style="margin-top:0;">Choose a Studio</label>
                 <div id="studio-options"></div>
                 <input type="hidden" name="studio_id" id="studio_id_input">
             </div>
+
+            <div class="form-error" id="submit-guard-error"></div>
 
             <button class="btn" type="submit" id="confirm-booking-btn">Confirm Booking</button>
         </form>
@@ -90,6 +96,17 @@ require __DIR__ . '/includes/header.php';
             const studioIdInput = document.getElementById('studio_id_input');
             const confirmBtn = document.getElementById('confirm-booking-btn');
             const form = document.getElementById('booking-form');
+            const availabilityError = document.getElementById('availability-check-error');
+            const submitGuardError = document.getElementById('submit-guard-error');
+
+            function showError(el, message) {
+                el.textContent = message;
+                el.classList.add('visible');
+            }
+            function clearError(el) {
+                el.textContent = '';
+                el.classList.remove('visible');
+            }
 
             // True only once the client has clicked "Check Available Studios"
             // for the CURRENT set of inputs. While true, Confirm stays locked
@@ -104,6 +121,8 @@ require __DIR__ . '/includes/header.php';
                 picker.style.display = 'none';
                 optionsDiv.innerHTML = '';
                 confirmBtn.disabled = false;
+                clearError(availabilityError);
+                clearError(submitGuardError);
             }
             form.querySelector('[name="booking_date"]').addEventListener('change', resetToUnchecked);
             form.querySelector('[name="start_time"]').addEventListener('change', resetToUnchecked);
@@ -111,13 +130,16 @@ require __DIR__ . '/includes/header.php';
             form.querySelector('.location-search-input').addEventListener('input', resetToUnchecked);
 
             checkBtn.addEventListener('click', function () {
+                clearError(availabilityError);
+                clearError(submitGuardError);
+
                 const locationId = form.querySelector('.location-hidden-id').value;
                 const date = form.querySelector('[name="booking_date"]').value;
                 const startTime = form.querySelector('[name="start_time"]').value;
                 const duration = form.querySelector('[name="duration"]').value;
 
                 if (!locationId || !date || !startTime || !duration) {
-                    alert('Please select a location, date, start time, and duration first.');
+                    showError(availabilityError, 'Please select a location, date, start time, and duration first.');
                     return;
                 }
 
@@ -133,7 +155,7 @@ require __DIR__ . '/includes/header.php';
                     .then(function (studios) {
                         checkBtn.textContent = 'Check Available Studios';
                         if (studios.error) {
-                            alert(studios.error);
+                            showError(availabilityError, studios.error);
                             hasCheckedCurrentSlot = false;
                             confirmBtn.disabled = false;
                             return;
@@ -155,7 +177,7 @@ require __DIR__ . '/includes/header.php';
                         checkBtn.textContent = 'Check Available Studios';
                         hasCheckedCurrentSlot = false;
                         confirmBtn.disabled = false;
-                        alert('Could not check availability. Please try again.');
+                        showError(availabilityError, 'Could not check availability. Please try again.');
                     });
             });
 
@@ -170,6 +192,7 @@ require __DIR__ . '/includes/header.php';
                 item.style.background = '#fdf3e3';
                 studioIdInput.value = item.dataset.id;
                 confirmBtn.disabled = false;
+                clearError(submitGuardError);
             });
 
             form.addEventListener('submit', function (e) {
@@ -177,12 +200,13 @@ require __DIR__ . '/includes/header.php';
                 // never actually picked one from the results.
                 if (hasCheckedCurrentSlot && !studioIdInput.value) {
                     e.preventDefault();
-                    alert('Please choose a studio from the list, or reload the page and press Confirm Booking without checking to be auto-assigned one.');
+                    showError(submitGuardError, 'Please choose a studio from the list, or reload the page and press Confirm Booking without checking to be auto-assigned one.');
                 }
             });
         })();
         </script>
     <?php endif; ?>
 </div>
+<script src="assets/form-validation.js"></script>
 <script src="assets/location-autocomplete.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>
