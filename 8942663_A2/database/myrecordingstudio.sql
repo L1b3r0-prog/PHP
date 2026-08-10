@@ -3,6 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
+-- Generation Time: Aug 10, 2026 at 03:00 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -39,7 +40,7 @@ CREATE TABLE `bookings` (
   `total_cost` decimal(8,2) NOT NULL,
   `status` enum('active','cancelled') NOT NULL DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `bookings`
@@ -48,11 +49,13 @@ CREATE TABLE `bookings` (
 INSERT INTO `bookings` (`booking_id`, `studio_id`, `client_id`, `booking_date`, `start_time`, `duration_hours`, `end_time`, `total_cost`, `status`, `created_at`) VALUES
 (1, 4, 2, '2026-08-03', '10:00:00', 1, '11:00:00', 40.00, 'active', '2026-08-03 01:40:44'),
 (2, 4, 2, '2026-08-03', '11:00:00', 1, '12:00:00', 40.00, 'active', '2026-08-03 01:40:55'),
-(3, 5, 2, '2026-08-03', '10:00:00', 1, '11:00:00', 40.00, 'active', '2026-08-03 02:10:53'),
 (4, 4, 2, '2026-08-03', '12:00:00', 1, '13:00:00', 40.00, 'active', '2026-08-03 02:23:23'),
 (5, 4, 2, '2026-08-06', '10:00:00', 1, '11:00:00', 40.00, 'active', '2026-08-06 06:42:18'),
 (6, 4, 2, '2026-08-06', '15:00:00', 1, '16:00:00', 40.00, 'active', '2026-08-06 06:42:48'),
-(7, 4, 2, '2026-08-06', '18:00:00', 1, '19:00:00', 40.00, 'cancelled', '2026-08-06 07:06:24');
+(7, 4, 2, '2026-08-06', '18:00:00', 1, '19:00:00', 40.00, 'cancelled', '2026-08-06 07:06:24'),
+(10, 1, 2, '2026-08-10', '15:00:00', 1, '16:00:00', 50.00, 'active', '2026-08-10 03:29:36'),
+(11, 11, 5, '2026-08-12', '12:00:00', 4, '16:00:00', 110.00, 'active', '2026-08-10 12:49:18'),
+(12, 14, 5, '2026-08-14', '11:00:00', 2, '13:00:00', 76.00, 'active', '2026-08-10 12:49:27');
 
 -- --------------------------------------------------------
 
@@ -74,7 +77,9 @@ CREATE TABLE `locations` (
 INSERT INTO `locations` (`location_id`, `description`, `num_studios`, `cost_per_hour`) VALUES
 (1, 'Bedok Studio', 4, 50.00),
 (2, 'Clementi Records', 2, 40.00),
-(3, 'Punggol Vids', 4, 35.00);
+(3, 'Punggol Vids', 4, 35.00),
+(4, 'Bukit Panjang Records', 3, 27.50),
+(5, 'Canberra Multishoots', 4, 38.00);
 
 -- --------------------------------------------------------
 
@@ -96,13 +101,20 @@ INSERT INTO `studios` (`studio_id`, `location_id`, `studio_number`) VALUES
 (1, 1, 1),
 (2, 1, 2),
 (3, 1, 3),
+(10, 1, 4),
 (4, 2, 1),
 (5, 2, 2),
 (6, 3, 1),
 (7, 3, 2),
 (8, 3, 3),
 (9, 3, 4),
-(10, 1, 4);
+(11, 4, 1),
+(12, 4, 2),
+(13, 4, 3),
+(14, 5, 1),
+(15, 5, 2),
+(16, 5, 3),
+(17, 5, 4);
 
 -- --------------------------------------------------------
 
@@ -127,7 +139,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `name`, `phone`, `email`, `password`, `type`, `created_at`) VALUES
 (1, 'System Admin', 61234567, 'admin@myrecordingstudio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin', '2026-08-03 01:39:15'),
 (2, 'Benjamin', 12345678, 'email@gmail.com', '$2y$10$ccT2KwRDMtp1XYDKQlYJFOhbmEaq8PesQzqS3OBso.OoUtYHNDxlu', 'client', '2026-08-03 01:40:20'),
-(3, 'Jack', 81234567, 'testing@hotmail.com', '$2y$10$bVs5HVGisfZxYu1y79zzSe8JuMnJTTWgu/i0.MFiWV0ZSxrAN9hJm', 'client', '2026-08-08 00:49:13');
+(5, 'User 2', 81231295, 'user2@hotmail.com', '$2y$10$MbC/wY9w/0twcqN1R2ik5eqZKq2sr26KqliiOfja9d2HVv1ecSZC.', 'client', '2026-08-10 12:46:26');
 
 --
 -- Indexes for dumped tables
@@ -169,25 +181,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `studios`
 --
 ALTER TABLE `studios`
-  MODIFY `studio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `studio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
