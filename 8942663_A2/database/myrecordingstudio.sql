@@ -113,7 +113,7 @@ INSERT INTO `studios` (`studio_id`, `location_id`, `studio_number`) VALUES
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `phone` int(8) NOT NULL,
+  `phone` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `type` enum('admin','client') NOT NULL,
