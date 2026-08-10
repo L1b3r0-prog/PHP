@@ -1,6 +1,14 @@
 <?php
 // bootstrap.php - included at the top of every page.
 
+// PHP defaults to UTC unless told otherwise, while MySQL's NOW() uses the
+// server's local system clock. Left unset, those two disagree by your UTC
+// offset -- e.g. a booking correctly rejected by PHP's clock could still be
+// misclassified as upcoming/completed by MySQL, or vice versa. Setting this
+// explicitly keeps every date()/time()/strtotime() call in the app on the
+// same clock as the database. Change to your actual deployment timezone.
+date_default_timezone_set('Asia/Singapore');
+
 // Prevent the browser from caching protected pages. Without this, clicking
 // "back" after logout can show a stale, cached copy of a page instead of
 // re-requesting it from the server -- which would skip require_login()

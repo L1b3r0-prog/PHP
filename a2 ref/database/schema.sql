@@ -37,7 +37,6 @@ CREATE TABLE studios (
     studio_id       INT AUTO_INCREMENT PRIMARY KEY,
     location_id     INT NOT NULL,
     studio_number   INT NOT NULL,
-    label           VARCHAR(50) NULL,
     FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE,
     UNIQUE (location_id, studio_number)
 );
@@ -82,11 +81,3 @@ INSERT INTO studios (location_id, studio_number) VALUES
 (1,1),(1,2),(1,3),
 (2,1),(2,2),
 (3,1),(3,2),(3,3),(3,4);
-
--- ------------------------------------------------------------
--- Only if needed (check with lecturer)
--- ------------------------------------------------------------
-/*
-UPDATE studios SET label = 'Vocal Booth' WHERE location_id = 1 AND studio_number = 1;
-UPDATE studios SET label = 'Live Room'   WHERE location_id = 1 AND studio_number = 2;
-*/

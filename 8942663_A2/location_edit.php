@@ -49,20 +49,4 @@ require __DIR__ . '/includes/header.php';
     </form>
     <p><small>Note: reducing studio count only removes studios that have no booking history.</small></p>
 </div>
-
-<div class="card" style="max-width:480px;margin:0 auto;">
-    <h2>Studios at this location</h2>
-    <p><small>Give a studio a custom name (e.g. "Vocal Booth"), or leave blank to show it as "Studio N".</small></p>
-    <?php foreach (Studio::forLocation($locationId) as $studio): ?>
-        <form method="post" action="studio_rename.php" style="display:flex;gap:8px;align-items:flex-end;margin-top:10px;">
-            <input type="hidden" name="studio_id" value="<?= (int)$studio['studio_id'] ?>">
-            <input type="hidden" name="location_id" value="<?= (int)$locationId ?>">
-            <div style="flex:1;">
-                <label style="margin-top:0;">Studio <?= (int)$studio['studio_number'] ?></label>
-                <input type="text" name="label" maxlength="50" placeholder="Studio <?= (int)$studio['studio_number'] ?>" value="<?= h($studio['label'] ?? '') ?>">
-            </div>
-            <button class="btn btn-secondary" type="submit" style="margin-top:0;">Save</button>
-        </form>
-    <?php endforeach; ?>
-</div>
 <?php require __DIR__ . '/includes/footer.php'; ?>

@@ -58,7 +58,7 @@ class Booking {
         // normalise start time to H:i:s for comparison
         $start = date('H:i:s', strtotime($startTime));
         if ($start < self::OPEN_TIME) {
-            $errors[] = 'Start time cannot be before 10:00 AM.';
+            $errors[] = 'Time Slot cannot be before 10:00 AM.';
         }
 
         $end = date('H:i:s', strtotime($start . ' +' . $duration . ' hours'));
@@ -69,7 +69,7 @@ class Booking {
 
         // Prevent booking a date/time already in the past (today only)
         if ($date === $today && $start < date('H:i:s')) {
-            $errors[] = 'Start time cannot be in the past.';
+            $errors[] = 'Time Slot cannot be in the past.';
         }
 
         return $errors;
@@ -107,18 +107,12 @@ class Booking {
 
     /**
      * Creates a booking at a specific location for a client.
-     * Automatically assigns the first free studio at that location.
+     * Automatically assigns the first free studio at that location --
+     * clients and admins book a location/date/time, not a specific studio.
      * Returns booking_id on success, throws Exception with a user-facing
      * message on validation/availability failure.
      */
-    /**
-     * Creates a booking. If $preferredStudioId is given (the client chose a
-     * specific studio), that exact studio is booked -- re-checked here for
-     * availability in case it was taken between the client's availability
-     * check and this submission. If null, falls back to auto-assigning the
-     * first free studio (used by admin bookings and as a safe default).
-     */
-    public static function create(int $locationId, int $clientId, string $date, string $startTime, int $duration, ?int $preferredStudioId = null): int {
+    public static function create(int $locationId, int $clientId, string $date, string $startTime, int $duration): int {
         $errors = self::validate($date, $startTime, $duration);
         if (!empty($errors)) {
             throw new Exception(implode(' ', $errors));
@@ -135,22 +129,9 @@ class Booking {
         $start = date('H:i:s', strtotime($startTime));
         $end = self::calculateEndTime($start, $duration);
 
-        if ($preferredStudioId !== null) {
-            $studioStmt = $db->prepare('SELECT * FROM studios WHERE studio_id = ? AND location_id = ?');
-            $studioStmt->execute([$preferredStudioId, $locationId]);
-            $studio = $studioStmt->fetch();
-            if (!$studio) {
-                throw new Exception('Selected studio does not belong to this location.');
-            }
-            if (self::hasOverlap($preferredStudioId, $date, $start, $end)) {
-                throw new Exception('That studio was just booked by someone else for this time slot. Please choose another.');
-            }
-            $studioId = $preferredStudioId;
-        } else {
-            $studioId = Studio::findAvailable($locationId, $date, $start, $end);
-            if ($studioId === null) {
-                throw new Exception('No studio is available at this location for the selected time slot.');
-            }
+        $studioId = Studio::findAvailable($locationId, $date, $start, $end);
+        if ($studioId === null) {
+            throw new Exception('No studio is available at this location for the selected time slot.');
         }
 
         $cost = self::calculateCost($duration, (float)$location['cost_per_hour']);
@@ -258,7 +239,7 @@ class Booking {
     }
 
     private static function detailSelect(): string {
-        return "SELECT b.*, s.studio_number, s.label AS studio_label, l.description AS location_description,
+        return "SELECT b.*, s.studio_number, l.description AS location_description,
                         l.location_id, l.cost_per_hour, u.name AS client_name, u.email AS client_email
                  FROM bookings b
                  JOIN studios s ON s.studio_id = b.studio_id

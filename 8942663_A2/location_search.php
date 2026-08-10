@@ -12,7 +12,7 @@ require __DIR__ . '/includes/header.php';
 ?>
 <div class="card">
     <h1>Search Locations</h1>
-    <p>Search by Location ID and/or Description. Description also matches studio names (e.g. "Vocal Booth"). Partial matches allowed. Leave a field blank to ignore it.</p>
+    <p>Search by Location ID and/or Description. Partial matches allowed. Leave a field blank to ignore it.</p>
     <form method="get" class="search-form">
         <div>
             <label>Location ID</label>

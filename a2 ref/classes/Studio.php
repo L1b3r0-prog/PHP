@@ -25,24 +25,16 @@ class Studio {
         return $stmt->fetchAll();
     }
 
-    /** "Vocal Booth" if a custom label is set, otherwise "Studio 3" */
-    public static function displayName(?string $label, int $studioNumber): string {
-        $label = trim((string)$label);
-        return $label !== '' ? $label : ('Studio ' . $studioNumber);
-    }
-
-    /** Sets or clears a studio's custom label */
-    public static function rename(int $studioId, string $label): void {
-        $label = trim($label);
-        $db = Database::getConnection();
-        $stmt = $db->prepare('UPDATE studios SET label = ? WHERE studio_id = ?');
-        $stmt->execute([$label === '' ? null : $label, $studioId]);
+    /** Display label for a studio, e.g. "Studio 3" */
+    public static function displayName(int $studioNumber): string {
+        return 'Studio ' . $studioNumber;
     }
 
     /**
      * Finds the first studio at a location that is free for the requested
      * date/time range. Returns studio_id, or null if none available.
-     * Used as the fallback when a booking is made without an explicit choice.
+     * Bookings always auto-assign the first free studio at the chosen
+     * location -- the client does not pick a specific studio.
      */
     public static function findAvailable(int $locationId, string $date, string $startTime, string $endTime): ?int {
         $db = Database::getConnection();
@@ -56,22 +48,6 @@ class Studio {
             }
         }
         return null;
-    }
-
-    /**
-     * Every studio at a location that is free for the requested date/time
-     * range -- used to let the client choose which specific studio to book,
-     * rather than always auto-assigning the first free one.
-     */
-    public static function allAvailable(int $locationId, string $date, string $startTime, string $endTime): array {
-        $studios = self::forLocation($locationId);
-        $available = [];
-        foreach ($studios as $studio) {
-            if (!Booking::hasOverlap((int)$studio['studio_id'], $date, $startTime, $endTime)) {
-                $available[] = $studio;
-            }
-        }
-        return $available;
     }
 
     /** Creates the N studio rows for a newly created location */

@@ -33,7 +33,7 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 - `classes/User.php` — abstract base: register, login, logout, validation, client/active-client lists.
 - `classes/Client.php`, `classes/Administrator.php` — role subclasses.
 - `classes/Location.php` — location CRUD, search, all/available/fully-booked lists.
-- `classes/Studio.php` — individual bookable rooms per location; availability lookup.
+- `classes/Studio.php` — individual bookable rooms per location; availability lookup for auto-assignment.
 - `classes/Booking.php` — core rules: 10am–10pm bounds, 1–12hr duration, overlap check, cost calc, create/modify/cancel, completed/upcoming lists.
 - `includes/bootstrap.php` — session start, class autoload, auth helper functions.
 - `includes/header.php` / `footer.php` — shared layout + nav.
@@ -43,7 +43,7 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 
 - Session must start ≥ 10:00 and end ≤ 22:00.
 - Duration 1–12 hours.
-- No double-booking: each location auto-assigns the first free studio for the slot; rejects if none free.
+- No double-booking: each location auto-assigns the first free studio for the slot (clients and admins book a location/date/time, not an individual studio); rejects if none free.
 - Modify/cancel blocked once `NOW() >= booking start`.
 - Search is partial-match (`LIKE`) and combinable across LocationID + Description.
 - Passwords hashed with bcrypt (`password_hash`/`password_verify`).
@@ -52,28 +52,19 @@ ISIT307 Assignment #2 reference solution. OOP PHP + MySQL.
 
 - "Currently available/fully booked" and "clients currently active" are evaluated against the live server clock (`NOW()`), per the assignment wording ("currently using a studio").
 - No payment functionality, per the brief.
+- Studios are auto-assigned within a location and are not individually named or selectable by the client — the brief only requires LocationID, Description, Number of studios, and Cost/hour to be tracked.
 - This is a reference/teaching build — read through it, understand every method, and be ready to explain and modify it live, since the brief requires answering the tutor's questions.
 
-## Changelog (this copy)
 
-- Replaced native `alert()` popups in `booking_create.php`'s inline script and
-  `assets/location-autocomplete.js` with inline `.form-error` messages styled
-  to match the site's existing `.alert-error` look. Client-side and
-  server-side validation errors now share one visual language instead of
-  mixing browser dialogs with in-page alerts. Destructive-action `confirm()`
-  dialogs (cancel booking) were left as native browser confirms, since that's
-  a distinct, standard pattern for "are you sure?" prompts.
-- Added `.form-error` / `.form-error.visible` rules to `css/style.css`.
-- Added `assets/form-validation.js`: intercepts native browser popups
-  triggered by `required` / `min` / `max` / `pattern` attributes (e.g.
-  picking a booking date in the past, duration outside 1-12, phone number
-  not matching the digit pattern, studio count/cost below the allowed
-  minimum) and reports them the same way as everything else, in an inline
-  `.form-error` box. Opt-in via `data-validate` on a `<form>`; if the script
-  fails to load, the form's original HTML attributes still validate
-  natively, so nothing goes unchecked. Wired into: `booking_create.php`,
-  `booking_edit.php`, `admin_booking_manage.php`, `location_create.php`,
-  `location_edit.php`, `register.php`, `admin_create.php`.
-- `login.php` left as native `required` only (email/password, no
-  min/max/pattern) -- that's ordinary browser behaviour, not the class of
-  issue being fixed here.
+
+
+
+
+--------------------------------
+FOR SUBMISSION
+--------------------------------
+For the database, change it so that there is data when exporting
+and for exporting ensure that under custom and object creation options, Add Create Database / USE option is enablad
+
+Ensure before exporting that there is data inside
+Test everything and ensure that it is all working before submission

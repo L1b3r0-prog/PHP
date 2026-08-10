@@ -12,8 +12,7 @@ if ($term === '') {
     exit;
 }
 
-// Matches on location description AND studio labels, e.g. typing "vocal"
-// finds a location whose studio is named "Vocal Booth".
+// Matches on location ID or description.
 $results = Location::searchWithStudios($term);
 
 $out = array_map(function ($loc) {
@@ -22,7 +21,6 @@ $out = array_map(function ($loc) {
         'description'    => $loc['description'],
         'num_studios'    => (int)$loc['num_studios'],
         'cost_per_hour'  => (float)$loc['cost_per_hour'],
-        'matched_studio' => $loc['matched_studio_label'] ?? null,
     ];
 }, $results);
 

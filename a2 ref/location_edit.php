@@ -33,37 +33,20 @@ require __DIR__ . '/includes/header.php';
 <div class="card" style="max-width:480px;margin:0 auto;">
     <h1>Edit Location #<?= (int)$locationId ?></h1>
     <?php foreach ($errors as $error): ?><div class="alert alert-error"><?= h($error) ?></div><?php endforeach; ?>
-    <form method="post" data-validate>
+    <form method="post">
         <input type="hidden" name="location_id" value="<?= (int)$locationId ?>">
 
         <label>Description</label>
-        <input type="text" name="description" data-label="Description" value="<?= h($location['description']) ?>" required>
+        <input type="text" name="description" value="<?= h($location['description']) ?>" required>
 
         <label>Number of Studios</label>
-        <input type="number" name="num_studios" data-label="Number of studios" min="1" value="<?= h((string)$location['num_studios']) ?>" required>
+        <input type="number" name="num_studios" min="1" value="<?= h((string)$location['num_studios']) ?>" required>
 
         <label>Cost per Hour ($)</label>
-        <input type="number" step="0.01" min="0" name="cost_per_hour" data-label="Cost per hour" value="<?= h((string)$location['cost_per_hour']) ?>" required>
+        <input type="number" step="0.01" min="0" name="cost_per_hour" value="<?= h((string)$location['cost_per_hour']) ?>" required>
 
         <button class="btn" type="submit">Save Changes</button>
     </form>
     <p><small>Note: reducing studio count only removes studios that have no booking history.</small></p>
 </div>
-
-<div class="card" style="max-width:480px;margin:0 auto;">
-    <h2>Studios at this location</h2>
-    <p><small>Give a studio a custom name (e.g. "Vocal Booth"), or leave blank to show it as "Studio N".</small></p>
-    <?php foreach (Studio::forLocation($locationId) as $studio): ?>
-        <form method="post" action="studio_rename.php" style="display:flex;gap:8px;align-items:flex-end;margin-top:10px;">
-            <input type="hidden" name="studio_id" value="<?= (int)$studio['studio_id'] ?>">
-            <input type="hidden" name="location_id" value="<?= (int)$locationId ?>">
-            <div style="flex:1;">
-                <label style="margin-top:0;">Studio <?= (int)$studio['studio_number'] ?></label>
-                <input type="text" name="label" maxlength="50" placeholder="Studio <?= (int)$studio['studio_number'] ?>" value="<?= h($studio['label'] ?? '') ?>">
-            </div>
-            <button class="btn btn-secondary" type="submit" style="margin-top:0;">Save</button>
-        </form>
-    <?php endforeach; ?>
-</div>
-<script src="assets/form-validation.js"></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

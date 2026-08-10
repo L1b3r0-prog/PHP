@@ -94,9 +94,6 @@ class Location {
 
     /**
      * Partial-match search across LocationID and Description.
-     * Description also matches against studio labels within that location
-     * (e.g. searching "vocal" finds a location because one of its studios
-     * is named "Vocal Booth"), so results can surface via studio name too.
      * Any field left blank is ignored (combination search).
      */
     public static function search(string $locationId = '', string $description = ''): array {
@@ -109,9 +106,7 @@ class Location {
             $params[] = '%' . $locationId . '%';
         }
         if ($description !== '') {
-            $sql .= ' AND (l.description LIKE ?
-                        OR EXISTS (SELECT 1 FROM studios s WHERE s.location_id = l.location_id AND s.label LIKE ?))';
-            $params[] = '%' . $description . '%';
+            $sql .= ' AND l.description LIKE ?';
             $params[] = '%' . $description . '%';
         }
 
@@ -121,36 +116,29 @@ class Location {
         return $stmt->fetchAll();
     }
 
-    /** Studio display names for a location, e.g. ["Vocal Booth", "Live Room", "Studio 3"] */
+    /** Studio display names for a location, e.g. ["Studio 1", "Studio 2", "Studio 3"] */
     public static function studioNames(int $locationId): array {
         $studios = Studio::forLocation($locationId);
         return array_map(
-            fn($s) => Studio::displayName($s['label'], $s['studio_number']),
+            fn($s) => Studio::displayName((int)$s['studio_number']),
             $studios
         );
     }
 
     /**
-     * Type-ahead search used by ajax_location_search.php: matches a location's
-     * ID, its description, OR the custom label of any studio inside it (e.g.
-     * typing "vocal" finds the location that has a studio named "Vocal Booth",
-     * typing "2" finds location ID 2).
-     * Returns each location plus which studio label matched, if any.
+     * Type-ahead search used by ajax_location_search.php: matches a
+     * location's ID or its description (e.g. typing "2" finds location
+     * ID 2, typing "clementi" finds "Clementi Records").
      */
     public static function searchWithStudios(string $term): array {
         $db = Database::getConnection();
-        $sql = "SELECT l.*, 
-                       (SELECT s.label FROM studios s
-                        WHERE s.location_id = l.location_id AND s.label LIKE ?
-                        LIMIT 1) AS matched_studio_label
-                FROM locations l
+        $sql = "SELECT l.* FROM locations l
                 WHERE l.location_id LIKE ?
                    OR l.description LIKE ?
-                   OR EXISTS (SELECT 1 FROM studios s WHERE s.location_id = l.location_id AND s.label LIKE ?)
                 ORDER BY l.location_id ASC";
         $like = '%' . $term . '%';
         $stmt = $db->prepare($sql);
-        $stmt->execute([$like, $like, $like, $like]);
+        $stmt->execute([$like, $like]);
         return $stmt->fetchAll();
     }
 }

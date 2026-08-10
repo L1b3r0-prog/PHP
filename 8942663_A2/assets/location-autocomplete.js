@@ -17,11 +17,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             suggestions.innerHTML = results.map(function (loc, i) {
-                const studioNote = loc.matched_studio ? (' &middot; matched studio: ' + loc.matched_studio) : '';
                 return '<div class="suggestion-item" data-index="' + i + '">' +
                     '<strong>' + loc.description + '</strong>' +
                     '<span>' + loc.num_studios + ' studio' + (loc.num_studios > 1 ? 's' : '') +
-                    ' &middot; $' + loc.cost_per_hour.toFixed(2) + '/hr' + studioNote + '</span>' +
+                    ' &middot; $' + loc.cost_per_hour.toFixed(2) + '/hr</span>' +
                     '</div>';
             }).join('');
             suggestions.style.display = 'block';
