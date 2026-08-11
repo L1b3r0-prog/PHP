@@ -1,12 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
-/**
- * User.php
- * Abstract base class for Administrator and Client.
- * Holds shared fields (id, name, phone, email, type) and shared
- * behaviour: register, login, logout, validation.
- */
 abstract class User {
     protected ?int $id;
     protected string $name;
@@ -28,23 +22,18 @@ abstract class User {
     public function getEmail(): string { return $this->email; }
     public function getType(): string { return $this->type; }
 
-    /**
-     * Common consumer webmail domains accepted for CLIENT registration.
-     * Admin accounts use a separate, stricter domain check (see validate()).
+    /** Common webmail domains accepted for CLIENT registration.
+     * Admin accounts uses a separate, domain check.
      */
     private const CLIENT_EMAIL_DOMAINS = [
         'gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com',
         'live.com', 'icloud.com', 'protonmail.com',
     ];
 
-    /** Domain required for staff/administrator accounts. Adjust to your organisation's real domain. */
+    /** Domain required for staff/administrator accounts. */
     private const ADMIN_EMAIL_DOMAIN = 'myrecordingstudio.com';
 
-    /**
-     * Validates registration input. Returns array of error strings (empty = valid).
-     * $type controls which email domain rule applies: 'client' -> common webmail
-     * providers only, 'admin' -> the organisation's own domain only.
-     */
+    /** Validates registration input (empty = valid). $type also picks the email-domain rule. */
     public static function validate(string $name, string $phone, string $email, string $password, string $type = 'client'): array {
         $errors = [];
         if (trim($name) === '') $errors[] = 'Name is required.';
@@ -69,9 +58,7 @@ abstract class User {
         return $errors;
     }
 
-    /**
-     * Registers a new user (admin or client). Returns new user id, or throws on duplicate email.
-     */
+    /** Registers a new user (admin or client). Returns new user id, or throws on duplicate email. */
     public static function register(string $name, string $phone, string $email, string $password, string $type): int {
         $db = Database::getConnection();
 
@@ -87,9 +74,7 @@ abstract class User {
         return (int)$db->lastInsertId();
     }
 
-    /**
-     * Attempts login. Returns associative row on success, null on failure.
-     */
+    /** Attempts login. Returns associative row on success, null on failure. */
     public static function attemptLogin(string $email, string $password): ?array {
         $db = Database::getConnection();
         $stmt = $db->prepare('SELECT * FROM users WHERE email = ?');
@@ -107,9 +92,7 @@ abstract class User {
         session_destroy();
     }
 
-    /**
-     * Loads a user row and returns a hydrated Client or Administrator instance.
-     */
+    /** Loads a user row and returns a hydrated Client or Administrator instance. */
     public static function findById(int $id): ?User {
         $db = Database::getConnection();
         $stmt = $db->prepare('SELECT * FROM users WHERE user_id = ?');

@@ -1,11 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/Database.php';
 
-/**
- * Studio.php
- * Represents a single bookable studio room inside a Location.
- * A Location with num_studios = 3 has 3 rows here.
- */
 class Studio {
     public int $studioId;
     public int $locationId;
@@ -30,11 +25,8 @@ class Studio {
         return 'Studio ' . $studioNumber;
     }
 
-    /**
-     * Finds the first studio at a location that is free for the requested
-     * date/time range. Returns studio_id, or null if none available.
-     * Bookings always auto-assign the first free studio at the chosen
-     * location -- the client does not pick a specific studio.
+    /** Finds the first studio at a location that is free for the requested date/time range. Returns studio_id, or null if none available.
+     * Bookings always auto-assign the first free studio at the chosen location
      */
     public static function findAvailable(int $locationId, string $date, string $startTime, string $endTime): ?int {
         $db = Database::getConnection();
@@ -59,8 +51,7 @@ class Studio {
         }
     }
 
-    /**
-     * Adjusts studio rows when a location's num_studios changes on edit.
+    /** Adjusts studio rows when a location's num_studios changes on edit.
      * Adds rows if increased; removes highest-numbered empty rows if decreased.
      */
     public static function syncForLocation(int $locationId, int $newCount): void {

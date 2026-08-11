@@ -13,7 +13,7 @@ if (!$booking) {
     exit;
 }
 
-// Clients may only modify their own bookings; admins may modify any.
+// Clients may only modify their own bookings while admins can modify any.
 if (current_user_type() === 'client' && (int)$booking['client_id'] !== current_user_id()) {
     $_SESSION['flash_error'] = 'You may only modify your own bookings.';
     header('Location: booking_list_upcoming.php');

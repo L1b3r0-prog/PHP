@@ -38,7 +38,7 @@ require __DIR__ . '/includes/header.php';
         <div class="alert alert-success">
             <strong>Booking Confirmed!</strong><br>
             Booking #<?= (int)$confirmation['booking_id'] ?> at <?= h($confirmation['location_description']) ?> (<?= h(Studio::displayName((int)$confirmation['studio_number'])) ?>)<br>
-            Date: <?= h($confirmation['booking_date']) ?><br>
+            Date: <?= h(format_date($confirmation['booking_date'])) ?><br>
             Time: <?= h(substr($confirmation['start_time'],0,5)) ?> - <?= h(substr($confirmation['end_time'],0,5)) ?> (<?= (int)$confirmation['duration_hours'] ?> hour<?= $confirmation['duration_hours'] > 1 ? 's' : '' ?>)<br>
             Total Cost: $<?= h(number_format((float)$confirmation['total_cost'], 2)) ?>
         </div>

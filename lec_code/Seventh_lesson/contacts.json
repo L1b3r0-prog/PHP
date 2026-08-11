@@ -1,0 +1,19 @@
+{
+  "contacts": [
+    {
+      "id": 37,
+      "name": "Tom White",
+      "phone": "02 1555 1212"
+    },
+    {
+      "id": 42,
+      "name": "Rita Brown",
+      "phone": "02 2555 1212"
+    },
+    {
+      "id": 56,
+      "name": "Rick Jones",
+      "phone": "04 1235 6765"
+    }
+  ]
+}

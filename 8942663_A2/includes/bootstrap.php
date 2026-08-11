@@ -1,12 +1,5 @@
 <?php
 // bootstrap.php - included at the top of every page.
-
-// PHP defaults to UTC unless told otherwise, while MySQL's NOW() uses the
-// server's local system clock. Left unset, those two disagree by your UTC
-// offset -- e.g. a booking correctly rejected by PHP's clock could still be
-// misclassified as upcoming/completed by MySQL, or vice versa. Setting this
-// explicitly keeps every date()/time()/strtotime() call in the app on the
-// same clock as the database. Change to your actual deployment timezone.
 date_default_timezone_set('Asia/Singapore');
 
 // Prevent the browser from caching protected pages. Without this, clicking
@@ -52,4 +45,9 @@ function require_role(string $role): void {
 }
 function h(?string $value): string {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+function format_date(?string $date): string {
+    if (!$date) return '';
+    return date('d/m/Y', strtotime($date));
 }

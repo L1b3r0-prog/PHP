@@ -2,12 +2,6 @@
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/Studio.php';
 
-/**
- * Booking.php
- * Core booking logic: validation (operating hours, duration, overlap),
- * cost calculation, create/modify/cancel, and the various list views
- * required for Client and Administrator.
- */
 class Booking {
     public const OPEN_TIME  = '10:00:00';
     public const CLOSE_TIME = '22:00:00';
@@ -15,16 +9,13 @@ class Booking {
     public const MAX_HOURS  = 12;
     public const MAX_ADVANCE_MONTHS = 6;
 
-    /** Latest date a booking may be made for, as a Y-m-d string */
+    /** Latest date a booking may be made for */
     public static function maxBookingDate(): string {
         return date('Y-m-d', strtotime('+' . self::MAX_ADVANCE_MONTHS . ' months'));
     }
 
-    /**
-     * Valid hourly start-time slots, e.g. ['10:00','11:00', ... '21:00'].
-     * Stops at 21:00 since the shortest session is 1 hour and sessions
-     * must end by 22:00 -- so 21:00 is the latest possible start.
-     */
+    
+    /** Valid hourly time slots that stops at 21:00 as the shortest session is 1 hour and must end by 22:00 */
     public static function hourlyStartSlots(): array {
         $slots = [];
         $openHour = (int)substr(self::OPEN_TIME, 0, 2);
@@ -35,10 +26,7 @@ class Booking {
         return $slots;
     }
 
-    /**
-     * Validates booking input against the business rules.
-     * Returns array of error strings (empty = valid).
-     */
+    /** Validates the booking inputs */
     public static function validate(string $date, string $startTime, int $duration): array {
         $errors = [];
 
@@ -55,19 +43,19 @@ class Booking {
             $errors[] = 'Duration must be between ' . self::MIN_HOURS . ' and ' . self::MAX_HOURS . ' hours.';
         }
 
-        // normalise start time to H:i:s for comparison
+        // Normalises the start time to H:i:s for comparison
         $start = date('H:i:s', strtotime($startTime));
         if ($start < self::OPEN_TIME) {
             $errors[] = 'Time Slot cannot be before 10:00 AM.';
         }
 
         $end = date('H:i:s', strtotime($start . ' +' . $duration . ' hours'));
-        // if adding hours rolls past midnight, strtotime wraps -- catch that explicitly
+        // If the timeslot ends past the cut off time, the error will be prompt
         if ($end <= $start || $end > self::CLOSE_TIME) {
             $errors[] = 'Session must end by 10:00 PM.';
         }
 
-        // Prevent booking a date/time already in the past (today only)
+        // Prevents booking in a time slot in the past
         if ($date === $today && $start < date('H:i:s')) {
             $errors[] = 'Time Slot cannot be in the past.';
         }
@@ -84,10 +72,7 @@ class Booking {
         return round($duration * $costPerHour, 2);
     }
 
-    /**
-     * Checks whether a studio already has an active booking overlapping
-     * the given date/time range. Excludes $excludeBookingId when modifying.
-     */
+    /** Checks if the studios has an overlapping active booking */
     public static function hasOverlap(int $studioId, string $date, string $startTime, string $endTime, ?int $excludeBookingId = null): bool {
         $db = Database::getConnection();
         $sql = "SELECT COUNT(*) c FROM bookings
@@ -105,13 +90,7 @@ class Booking {
         return (int)$stmt->fetch()['c'] > 0;
     }
 
-    /**
-     * Creates a booking at a specific location for a client.
-     * Automatically assigns the first free studio at that location --
-     * clients and admins book a location/date/time, not a specific studio.
-     * Returns booking_id on success, throws Exception with a user-facing
-     * message on validation/availability failure.
-     */
+    /** Creates a booking at a specific location for a client which also automatically assigns a free studio */
     public static function create(int $locationId, int $clientId, string $date, string $startTime, int $duration): int {
         $errors = self::validate($date, $startTime, $duration);
         if (!empty($errors)) {
@@ -144,15 +123,12 @@ class Booking {
         return (int)$db->lastInsertId();
     }
 
-    /** Same as create() but Administrator books on behalf of a chosen client */
+    /** Same as create() but the Administrator books on behalf of a chosen client */
     public static function createByAdmin(int $locationId, int $clientId, string $date, string $startTime, int $duration): int {
         return self::create($locationId, $clientId, $date, $startTime, $duration);
     }
 
-    /**
-     * Modifies an existing booking's date/time/duration.
-     * Blocked if the session has already started.
-     */
+    /** Modifies an existing booking's date/time/duration and blocks if the session has already started */
     public static function modify(int $bookingId, string $date, string $startTime, int $duration): void {
         $booking = self::findById($bookingId);
         if (!$booking) throw new Exception('Booking not found.');
@@ -185,7 +161,7 @@ class Booking {
         $stmt->execute([$date, $start, $duration, $end, $cost, $bookingId]);
     }
 
-    /** Cancels a booking, blocked if the session has already started */
+    /** Cancels a booking and the feature is blocked if the session has already started */
     public static function cancel(int $bookingId): void {
         $booking = self::findById($bookingId);
         if (!$booking) throw new Exception('Booking not found.');
@@ -204,12 +180,8 @@ class Booking {
         return strtotime($startDateTime) <= time();
     }
 
-    /**
-     * Time-based status for display, independent of the stored active/
-     * cancelled column: 'pending' (hasn't started yet), 'active' (session
-     * is currently in progress), or 'completed' (end time has passed).
-     * Only meaningful for non-cancelled bookings -- check $booking['status']
-     * === 'cancelled' separately before calling this.
+    /** Time-based status for display, independent of the stored active/cancelled column: 'pending' (hasn't started yet), 
+     * 'active' (session is currently in progress), or 'completed' (end time has passed).
      */
     public static function timeStatus(array $booking): string {
         $now = time();
@@ -229,7 +201,7 @@ class Booking {
         return $row ?: null;
     }
 
-    /** Full booking details joined with studio/location/client, for confirmations & lists */
+    /** Full booking details joined with studio/location/client for confirmations & lists */
     public static function detailedById(int $bookingId): ?array {
         $db = Database::getConnection();
         $stmt = $db->prepare(self::detailSelect() . ' WHERE b.booking_id = ?');
@@ -247,7 +219,7 @@ class Booking {
                  JOIN users u ON u.user_id = b.client_id";
     }
 
-    /** Client: previously completed sessions (end time already passed) */
+    /** Client's previously completed sessions (end time already passed) */
     public static function completedForClient(int $clientId): array {
         $db = Database::getConnection();
         $sql = self::detailSelect() . " WHERE b.client_id = ? AND b.status = 'active'
@@ -258,7 +230,7 @@ class Booking {
         return $stmt->fetchAll();
     }
 
-    /** Client: current + future sessions */
+    /** Client's current + future sessions */
     public static function upcomingForClient(int $clientId): array {
         $db = Database::getConnection();
         $sql = self::detailSelect() . " WHERE b.client_id = ? AND b.status = 'active'

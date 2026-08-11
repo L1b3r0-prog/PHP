@@ -10,7 +10,6 @@ switch ($view) {
         $heading = 'Locations with Available Studios';
         break;
     case 'fully_booked':
-        // fully-booked list only makes sense for Administrator
         if (current_user_type() !== 'admin') { header('Location: location_list.php'); exit; }
         $locations = Location::fullyBooked();
         $heading = 'Fully Booked Locations';

@@ -87,7 +87,7 @@ require __DIR__ . '/includes/header.php';
             <td><?= h($b['client_name']) ?></td>
             <td><?= h($b['location_description']) ?></td>
             <td><?= h(Studio::displayName((int)$b['studio_number'])) ?></td>
-            <td><?= h($b['booking_date']) ?></td>
+            <td><?= h(format_date($b['booking_date'])) ?></td>
             <td><?= h(substr($b['start_time'],0,5)) ?>-<?= h(substr($b['end_time'],0,5)) ?></td>
             <td><span class="badge badge-<?= $displayStatus ?>"><?= h($displayStatus) ?></span></td>
             <td>

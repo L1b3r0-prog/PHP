@@ -1,5 +1,3 @@
-// Powers any .autocomplete[data-role="location-search"] block on the page.
-// Expects inside it: input.location-search-input, input.location-hidden-id, div.suggestions
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.autocomplete[data-role="location-search"]').forEach(function (container) {
         const searchBox = container.querySelector('.location-search-input');

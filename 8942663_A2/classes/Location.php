@@ -2,11 +2,6 @@
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/Studio.php';
 
-/**
- * Location.php
- * CRUD for studio locations, plus the search and list variations
- * required by both Client and Administrator.
- */
 class Location {
 
     public static function validate(string $description, $numStudios, $costPerHour): array {
@@ -49,16 +44,13 @@ class Location {
         return $row ?: null;
     }
 
-    /** All locations, newest (highest ID) first */
+    /** All locations that returns newest (highest ID) first */
     public static function all(): array {
         $db = Database::getConnection();
         return $db->query('SELECT * FROM locations ORDER BY location_id ASC')->fetchAll();
     }
 
-    /**
-     * Locations that have at least one studio with no active booking
-     * covering the current moment (i.e. free right now).
-     */
+    /** Shows the locations that have at least one studio without an active booking */
     public static function withAvailableStudios(): array {
         $db = Database::getConnection();
         $sql = "SELECT l.* FROM locations l
@@ -92,10 +84,7 @@ class Location {
         return $db->query($sql)->fetchAll();
     }
 
-    /**
-     * Partial-match search across LocationID and Description.
-     * Any field left blank is ignored (combination search).
-     */
+    /** Partial matching search for LocationID and Description */
     public static function search(string $locationId = '', string $description = ''): array {
         $db = Database::getConnection();
         $sql = 'SELECT * FROM locations l WHERE 1=1';
@@ -125,11 +114,7 @@ class Location {
         );
     }
 
-    /**
-     * Type-ahead search used by ajax_location_search.php: matches a
-     * location's ID or its description (e.g. typing "2" finds location
-     * ID 2, typing "clementi" finds "Clementi Records").
-     */
+    /** Type-ahead search that matches location ID or description. */
     public static function searchWithStudios(string $term): array {
         $db = Database::getConnection();
         $sql = "SELECT l.* FROM locations l

@@ -5,8 +5,7 @@ $pageTitle = 'Add Administrator';
 $errors = [];
 
 // This page is only reachable by someone already logged in as admin.
-// It is intentionally NOT linked from register.php -- admin accounts
-// are never created through public self-registration.
+// It is intentionally not linked from register.php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
