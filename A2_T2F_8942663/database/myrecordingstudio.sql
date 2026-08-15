@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 10, 2026 at 03:00 PM
+-- Generation Time: Aug 12, 2026 at 04:08 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -55,7 +55,10 @@ INSERT INTO `bookings` (`booking_id`, `studio_id`, `client_id`, `booking_date`, 
 (7, 4, 2, '2026-08-06', '18:00:00', 1, '19:00:00', 40.00, 'cancelled', '2026-08-06 07:06:24'),
 (10, 1, 2, '2026-08-10', '15:00:00', 1, '16:00:00', 50.00, 'active', '2026-08-10 03:29:36'),
 (11, 11, 5, '2026-08-12', '12:00:00', 4, '16:00:00', 110.00, 'active', '2026-08-10 12:49:18'),
-(12, 14, 5, '2026-08-14', '11:00:00', 2, '13:00:00', 76.00, 'active', '2026-08-10 12:49:27');
+(12, 14, 5, '2026-08-14', '11:00:00', 2, '13:00:00', 76.00, 'active', '2026-08-10 12:49:27'),
+(13, 4, 5, '2026-08-13', '14:00:00', 6, '20:00:00', 240.00, 'active', '2026-08-11 07:05:16'),
+(14, 4, 5, '2026-08-12', '12:00:00', 2, '14:00:00', 80.00, 'active', '2026-08-11 07:07:20'),
+(15, 4, 2, '2026-08-11', '16:00:00', 2, '18:00:00', 80.00, 'active', '2026-08-11 07:09:23');
 
 -- --------------------------------------------------------
 
@@ -79,7 +82,8 @@ INSERT INTO `locations` (`location_id`, `description`, `num_studios`, `cost_per_
 (2, 'Clementi Records', 2, 40.00),
 (3, 'Punggol Vids', 4, 35.00),
 (4, 'Bukit Panjang Records', 3, 27.50),
-(5, 'Canberra Multishoots', 4, 38.00);
+(5, 'Canberra Multishoots', 4, 38.00),
+(6, 'Paya Lebar Store', 3, 33.00);
 
 -- --------------------------------------------------------
 
@@ -114,7 +118,10 @@ INSERT INTO `studios` (`studio_id`, `location_id`, `studio_number`) VALUES
 (14, 5, 1),
 (15, 5, 2),
 (16, 5, 3),
-(17, 5, 4);
+(17, 5, 4),
+(18, 6, 1),
+(19, 6, 2),
+(20, 6, 3);
 
 -- --------------------------------------------------------
 
@@ -125,7 +132,7 @@ INSERT INTO `studios` (`studio_id`, `location_id`, `studio_number`) VALUES
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `phone` varchar(20) NOT NULL,
+  `phone` int(8) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `type` enum('admin','client') NOT NULL,
@@ -138,7 +145,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `name`, `phone`, `email`, `password`, `type`, `created_at`) VALUES
 (1, 'System Admin', 61234567, 'admin@myrecordingstudio.com', '$2b$10$9NYTE7mJJ2gROox2cLHguuU4/piFA1Hn9AP4iyq8pkc22OL6Dd3GG', 'admin', '2026-08-03 01:39:15'),
-(2, 'Benjamin', 12345678, 'email@gmail.com', '$2y$10$ccT2KwRDMtp1XYDKQlYJFOhbmEaq8PesQzqS3OBso.OoUtYHNDxlu', 'client', '2026-08-03 01:40:20'),
+(2, 'Benjamin', 12345678, 'user1@gmail.com', '$2y$10$ccT2KwRDMtp1XYDKQlYJFOhbmEaq8PesQzqS3OBso.OoUtYHNDxlu', 'client', '2026-08-03 01:40:20'),
 (5, 'User 2', 81231295, 'user2@hotmail.com', '$2y$10$MbC/wY9w/0twcqN1R2ik5eqZKq2sr26KqliiOfja9d2HVv1ecSZC.', 'client', '2026-08-10 12:46:26');
 
 --
@@ -181,19 +188,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `location_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `studios`
 --
 ALTER TABLE `studios`
-  MODIFY `studio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `studio_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
