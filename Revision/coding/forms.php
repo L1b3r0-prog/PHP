@@ -1,5 +1,10 @@
-<form action="ProcessName.php" method="get">
-    First name: <input type="text" name="firstName">
-    Last name: <input type="text" name="lastName">
-    <input type="submit" name="submit" value="Go">
-</form>
+<!DOCTYPE html>
+<html>
+    <body>
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+            Select image to upload:
+            <input type="file" name="fileupload" id"fileupload">
+            <input type="submit" value="uploadimage" name="submit">
+        </form>
+    </body>
+</html>
