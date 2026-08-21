@@ -1,7 +1,7 @@
 <?php
     // Two ways to create a database is to either use
     // the sql in php code or to create in the DB itself
-    incldue "NameOfPHPFile.php";
+    include "NameOfPHPFile.php";
     $conn->select_db("DBName");
 
     sql = "CREATE TABLE TableName ( // Use () instead of {}
